@@ -2,7 +2,8 @@
 require('dotenv').config({path: './config/.env'});
 
 // Permet de se connecter à MySQL
-var mysql = require('mysql');
+const mysql = require('mysql');
+const mysql = require('mysql2');
 
 // Permet de configurer l'accès à la base de données
 var dbConnection = mysql.createConnection({
