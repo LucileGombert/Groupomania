@@ -1,0 +1,21 @@
+// Chemin d'accès pour le fichier .env
+require('dotenv').config({path: './config/.env'});
+
+// Permet d'importer le package http de Node
+const http = require('http');
+
+// Permet d'importer l'application
+const app = require('./app');
+
+// Indique à l'application sur quel port elle doit être lancée
+app.set('port', process.env.PORT);
+
+// Crée le serveur
+const server = http.createServer(app);
+
+
+// Indique le port qui doit utilisé par le serveur
+server.listen(process.env.PORT, () => {
+    console.log(`Listening on port ${process.env.PORT}`);
+});
+
