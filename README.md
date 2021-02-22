@@ -23,5 +23,5 @@ Groupomania
 <br>▹ A partir du dossier backend, exécutez `npm install` puis `nodemon server` ;
 <br>▹ Le serveur doit fonctionner sur `localhost` avec le port par défaut `3000` ;
 <br>
-<br>▹ A partir du dossier frontend, exécutez `npm install` puis `npm run serve` ;
+<br>▹ A partir du dossier frontend et du sous-dossier vue-groupomania, exécutez `npm install` puis `npm run serve` ;
 <br>▹ Le frontend de l'application doit fonctionner sur `localhost` avec le port par défaut `8080`.
