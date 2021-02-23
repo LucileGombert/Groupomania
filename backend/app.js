@@ -16,6 +16,7 @@ const userRoutes = require('./routes/user');
 const dbConnection = require('./config/dbConnection');
 
 // Transforme le corps de la requête en objet JS
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Permet d'accéder aux routes pour les utilisateurs et les publications

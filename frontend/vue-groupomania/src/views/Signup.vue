@@ -29,7 +29,7 @@
             <label for="password" class="inputLabel">Mot de passe</label>
             <input type="password" id="password" name="password">
         </div>
-        <button class="btn" @click="$router.push('globalhome')">M'inscrire</button>
+        <button class="button" @click="$router.push('post')">M'inscrire</button>
       </form>
     </div>
   </div>
@@ -59,7 +59,7 @@ form {
 .inputLabel {
     text-align: start;
 }
-.btn {
+.button {
     border: 3px solid #3f3d56;
     border-radius: 25px;
     color: #3f3d56;

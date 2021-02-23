@@ -9,14 +9,11 @@ const userCtrl = require('../controllers/user');
 
 
 
-// Route post pour créer un nouveau compte utilisateur
+// Routes de l'API pour les utilisateurs
 router.post('/signup', userCtrl.signup);
-
-// // Route post pour se connecter à un compte utilisateur
 // router.post('/login',userCtrl.login);
-
-// // Route delete pour supprimer un compte utilisateur
 // router.delete('/:id',userCtrl.deleteAccount);
+
 
 
 

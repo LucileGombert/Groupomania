@@ -14,7 +14,7 @@
             <label for="password" class="inputLabel">Mot de passe</label>
             <input type="password" id="password" name="password">
         </div>
-        <button class="btn" @click="$router.push('globalhome')">Me connecter</button>
+        <button class="btn" @click="$router.push('post')">Me connecter</button>
     </form>
     </div>
     

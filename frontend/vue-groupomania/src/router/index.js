@@ -26,9 +26,9 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/Signup.vue')
   },
   {
-    path: '/globalhome',
-    name: 'Globalhome',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Globalhome.vue')
+    path: '/post',
+    name: 'Post',
+    component: () => import(/* webpackChunkName: "about" */ '../views/Post.vue')
   },
   {
     path: '/profile',
