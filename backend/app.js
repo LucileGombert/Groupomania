@@ -13,7 +13,7 @@ const userRoutes = require('./routes/user');
 // const postRoutes = require('./routes/post');
 
 // Permet d'importer le fichier de connexion à la base de données
-const dbConnection = require('./config/dbConnection');
+// const dbConnection = require('./config/dbConnection');
 
 // Transforme le corps de la requête en objet JS
 app.use(bodyParser.urlencoded({ extended: true }));

@@ -11,8 +11,8 @@ const userCtrl = require('../controllers/user');
 
 // Routes de l'API pour les utilisateurs
 router.post('/signup', userCtrl.signup);
-// router.post('/login',userCtrl.login);
-// router.delete('/:id',userCtrl.deleteAccount);
+router.post('/login',userCtrl.login);
+router.delete('/:id',userCtrl.deleteAccount);
 
 
 
