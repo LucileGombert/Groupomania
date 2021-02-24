@@ -8,18 +8,9 @@ require('dotenv').config({path: './config/.env'});
 const db = require('../models/index');
 
 
-// Permet de créer un schéma de validation de mot de passe
-const schemaPassword = new passwordValidator();
-
-schemaPassword
-.is().min(8)                                    
-.is().max(20)                                 
-.has().uppercase()                              
-.has().lowercase()                              
-.has().digits(2)
-.has().symbols(1)                                 
-.has().not().spaces();
-
+// Regex de validation
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*]).{8,20}/;
 
 // Permet de créer un nouvel utilisateur
 exports.signup = (req, res, next) => {
@@ -32,6 +23,21 @@ exports.signup = (req, res, next) => {
         return res.status(400).json({ error: 'Tous les champs doivent être renseignés' });
     } 
 
+    // Permet de contrôler la longueur du pseudo
+    if (username.length <= 4 || username.length >= 15) {
+        return res.status(400).json({ error: 'Le pseudo doit contenir 5 à 15 caractères' });
+    }
+
+    // Permet de contrôler la validité de l'adresse mail
+    if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Adresse mail invalide' });
+    }
+
+    // Permet de contrôler la validité du mot de passe
+    if (!passwordRegex.test(password)) {
+    return res.status(400).json({ error: 'Le mot de passe doit contenir entre 8 et 20 caractères dont au moins une lettre majuscule, une lettre minusucle, un chiffre et un symbole' });
+    }
+
     // Permet de vérifier que l'utilisateur que l'on souhaite créer n'existe pas déjà
     db.User.findOne({
         attributes: ['email'],
@@ -39,24 +45,19 @@ exports.signup = (req, res, next) => {
     })
     .then(userExist => {
         if(!userExist) {
-            // Si le mot de passe comporte les caractères nécessaires, le compte sera créé et enregistré dans la base de données
-            if(schemaPassword.validate(req.body.password)) {
-                bcrypt.hash(req.body.password, 10)
-                .then(hash => {
-                    const user = db.User.build({
-                        username: req.body.username,
-                        email: req.body.email,
-                        password: hash,
-                        isAdmin: 0
-                    });
-                    user.save()
-                        .then(() => res.status(201).json({ message: 'Votre compte a bien été créé !' }))
-                        .catch(error => res.status(400).json({ error }));
-                })
-                .catch(error => res.status(500).json({ error: "Une erreur s'est produite lors de la création de votre compte" }));
-            } else {
-                throw 'Le mot de passe doit contenir entre 8 et 20 caractères dont au moins une lettre majuscule, une lettre minusucle, deux chiffres et un symbole';
-            }
+            bcrypt.hash(req.body.password, 10)
+            .then(hash => {
+                const user = db.User.build({
+                    username: req.body.username,
+                    email: req.body.email,
+                    password: hash,
+                    isAdmin: 0
+                });
+                user.save()
+                    .then(() => res.status(201).json({ message: 'Votre compte a bien été créé !' }))
+                    .catch(error => res.status(400).json({ error }));
+            })
+            .catch(error => res.status(500).json({ error: "Une erreur s'est produite lors de la création de votre compte" }));
         } else {
             return res.status(404).json({ error: 'Cet utilisateur existe déjà'})
         }
@@ -95,16 +96,58 @@ exports.login = (req, res, next) => {
 }
 
 
+// Permet à un utilisateur d'accéder à son profil
+exports.getUserProfile = (req, res, next) => {
+    const id = req.params.id;
+    db.User.findOne({
+        attributes: [ 'id', 'username', 'email' ],
+        where: { id: id }
+    })
+    .then(user => {
+        if(user) {
+            res.status(200).json(user);
+        } else {
+            res.status(404).json({ error: 'Utilisateur non trouvé'})
+        }
+    })
+    .catch(error => res.status(404).json({ error }));
+}
+
+
+// Permet à un utilisateur de modifier son profil
+// exports.modifyUserProfile = (req, res, next) => {
+//     const id = req.params.id;
+//     const username = req.body.username;
+//     db.User.findOne({
+//         attributes: ['username'],
+//         where: { id: id }
+//     })
+//     .then(user => {
+//         if(user) {
+//             db.User.update({ 
+//                 username: (username ? username : user.username) 
+//             })
+//             .then(() => res.status(200).json({ message: 'Votre pseudo a bien été modifié !' }))
+//             .catch(error => res.status(500).json({ error }));
+//         } else {
+//             return res.status(404).json({ error: 'Utilisateur non trouvé'})
+//         }
+//     })
+//     .catch(error => res.status(404).json({ error }));
+// }
+
+
 // Permet à un utilisateur de supprimer son compte
 exports.deleteAccount = (req, res, next) => {
+    const id = req.params.id;
     db.User.findOne({
-        attributes: ['email'],
-        where: { email: req.body.email}
+        attributes: ['id'],
+        where: { id: id }
     })
     .then(user => {
         if(user) {
             db.User.destroy({ 
-                where: { email: req.body.email } 
+                where: { id: id } 
             })
             .then(() => res.status(200).json({ message: 'Votre compte a été supprimé' }))
             .catch(() => res.status(500).json({ error }));
@@ -113,4 +156,5 @@ exports.deleteAccount = (req, res, next) => {
             return res.status(404).json({ error: 'Utilisateur non trouvé'})
         }
     })
+    .catch(error => res.status(500).json({ error }));
 }
