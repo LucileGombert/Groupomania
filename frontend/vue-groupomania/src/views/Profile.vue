@@ -1,6 +1,5 @@
 <template>
   <div class="profile">
-    <!-- <img alt="Logo Groupomania" src="../assets/iconLong450.png"> -->
     <Navbar msg="Bienvenue sur Groupomania, votre nouveau réseau social d'entreprise !"/>
     
     <h1>Bienvenue <span>xxx</span> !</h1>
@@ -12,50 +11,95 @@
       </div>
       <div class="profile__content__info">
         <h2>Vos informations</h2>
-
+        <p>Pseudo</p>
+        <div class="profile__content__info__item">test1</div>
+        <p>Email</p>
+        <div class="profile__content__info__item">test01@groupomania.com</div>
       </div>
     </div>
+    <modale v-bind:revele="revele" v-bind:toggleModale='toggleModale'></modale>
+    <button class="profile__button" v-on:click="toggleModale">Supprimer mon compte</button>
     
   </div>
 </template>
 
 <script>
 import Navbar from '@/components/Navbar.vue'
+import Modale from '@/components/Modale.vue'
 
 export default {
   name: 'Profile',
+  data(){
+    return {
+      revele: false
+    }
+  },
   components: {
-    Navbar
+    Navbar,
+    Modale
+  },
+  methods: {
+    toggleModale: function() {
+      this.revele = !this.revele
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-.profile__content {
-  display: flex;
-  justify-content: center;
-  &__photo, &__info {
+.profile {
+  &__content {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 25px;
-    background: #ffb1b1;
-    margin: 1rem;
-    width: 30rem;
-    &__title {
-      margin-bottom: 2rem;
-    }
-    &__img {
-      width: 5rem;
-    }
-    &__button {
-      border: 2px solid #3f3d56;
+    justify-content: center;
+    &__photo, &__info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       border-radius: 25px;
-      color: #3f3d56;
-      font-size: 15px;
-      font-weight: bold;
-      padding: 0.4rem;
+      background: #ffb1b1;
       margin: 1rem;
+      width: 30rem;
+      height: 20rem;
+      &__title {
+        margin-bottom: 2rem;
+      }
+      &__img {
+        width: 5rem;
+        margin: 2rem 0 1rem 0;
+      }
+      &__button {
+        border: 2px solid #3f3d56;
+        border-radius: 25px;
+        color: #3f3d56;
+        font-size: 15px;
+        font-weight: bold;
+        padding: 0.4rem;
+        margin: 1rem;
+        &:hover {
+          border: 2px solid #ff6363;
+          color: #ff6363;
+        }
+      }
+      &__item {
+        background: white;
+        border-radius: 10px;
+        padding: 0.5rem;
+        width: 15rem;
+        text-align: start;
+      }
+    }
+  }
+  &__button {
+    border: 3px solid #3f3d56;
+    border-radius: 25px;
+    color: #3f3d56;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 0.9rem;
+    margin: 1rem;
+    &:hover {
+      border: 3px solid #ff6363;
+      color: #ff6363;
     }
   }
 }

@@ -30,11 +30,6 @@ import Navbar from '@/components/Navbar.vue'
 
 export default {
     name: 'Post',
-    data(){
-      return {
-        revele: false
-      }
-    },
     components: {
         Navbar
     }
@@ -81,25 +76,12 @@ export default {
             font-weight: bold;
             padding: 0.4rem;
             margin: 1rem;
+            &:hover {
+                border: 2px solid #ff6363;
+                color: #ff6363;
+            }
         }
         
     }
 }
-
-// .btn {
-//     border: 3px solid #3f3d56;
-//     border-radius: 25px;
-//     color: #3f3d56;
-//     font-size: 15px;
-//     font-weight: bold;
-//     padding: 0.5rem;
-//     margin: 1rem;
-// }
-// .btn:hover {
-//         border: 3px solid #ff6363;
-//         color: #ff6363;
-// }
-// .fa-plus {
-//     padding: 0.5rem;
-// }
 </style>

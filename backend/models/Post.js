@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class Post extends Model {
@@ -14,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Post.init({
-    userId: DataTypes.INTEGER,
     title: DataTypes.STRING,
     content: DataTypes.STRING,
     link: DataTypes.STRING,

@@ -5,7 +5,8 @@
             <div class="navLink">
                 <router-link to="/post" class="link">Accueil</router-link> 
                 <router-link to="/profile" class="link">Mon profil</router-link>
-                <router-link to="/about" class="link"><i class="far fa-question-circle fa-2x"></i></router-link>
+                <!-- <router-link to="/about" class="link"><i class="far fa-question-circle fa-2x"></i></router-link> -->
+                <router-link to="/disconnection" class="link"><i class="fas fa-sign-out-alt fa-2x"></i></router-link>
             </div>
         </div>
         <router-view/>

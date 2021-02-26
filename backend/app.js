@@ -18,7 +18,7 @@ app.use((req, res, next) => {
 
 // Permet d'importer les routers user et post
 const userRoutes = require('./routes/user');
-// const postRoutes = require('./routes/post');
+const postRoutes = require('./routes/post');
 
 
 // Transforme le corps de la requête en objet JS
@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 
 // Permet d'accéder aux routes pour les utilisateurs et les publications
 app.use('/api/user', userRoutes);
-// app.use('/api/post', postRoutes);
+app.use('/api/post', postRoutes);
 
 
 // Permet d'exporter l'application express pour pouvoir y accéder depuis les autres fichiers du projet 

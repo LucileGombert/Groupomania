@@ -20,6 +20,5 @@ router.delete('/:id', auth, userCtrl.deleteAccount);
 
 
 
-
 // Permet d'exporter le router
 module.exports = router;

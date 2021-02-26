@@ -135,7 +135,17 @@ exports.getUserProfile = (req, res, next) => {
 //     })
 //     .catch(error => res.status(404).json({ error }));
 // }
-
+exports.modifyUserProfile = (req, res, next) => {
+    const userObject = req.file ?
+    {
+    ...JSON.parse(req.body.user),
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    } : { ...req.body };
+    // db.User.update({_id: req.params.id}, {...userObject, _id: req.params.id})
+    db.User.update(userObject)
+    .then(user => res.status(200).json({message: 'Profil modifié'}))
+    .catch(error => res.status(400).json({ error}))
+}
 
 // Permet à un utilisateur de supprimer son compte
 exports.deleteAccount = (req, res, next) => {
@@ -158,3 +168,4 @@ exports.deleteAccount = (req, res, next) => {
     })
     .catch(error => res.status(500).json({ error }));
 }
+
