@@ -15,9 +15,8 @@ const auth = require('../middleware/auth');
 router.post('/signup', userCtrl.signup);
 router.post('/login', userCtrl.login);
 router.get('/:id', auth, userCtrl.getUserProfile);
-// router.put('/:id', auth, userCtrl.modifyUserProfile);
+router.put('/:id', auth, userCtrl.modifyUserProfile);
 router.delete('/:id', auth, userCtrl.deleteAccount);
-
 
 
 // Permet d'exporter le router

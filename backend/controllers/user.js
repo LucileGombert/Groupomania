@@ -80,10 +80,11 @@ exports.login = (req, res, next) => {
                 }
                 res.status(200).json({
                     userId: user.id,
+                    username: user.username,
                     token: jwt.sign(
                         {userId: user.id},
                         process.env.JWT_SECRET_TOKEN,
-                        {expiresIn: '1h'}
+                        {expiresIn: '24h'}
                     )
                 });
             })
@@ -115,37 +116,32 @@ exports.getUserProfile = (req, res, next) => {
 
 
 // Permet à un utilisateur de modifier son profil
-// exports.modifyUserProfile = (req, res, next) => {
-//     const id = req.params.id;
-//     const username = req.body.username;
-//     db.User.findOne({
-//         attributes: ['username'],
-//         where: { id: id }
-//     })
-//     .then(user => {
-//         if(user) {
-//             db.User.update({ 
-//                 username: (username ? username : user.username) 
-//             })
-//             .then(() => res.status(200).json({ message: 'Votre pseudo a bien été modifié !' }))
-//             .catch(error => res.status(500).json({ error }));
-//         } else {
-//             return res.status(404).json({ error: 'Utilisateur non trouvé'})
-//         }
-//     })
-//     .catch(error => res.status(404).json({ error }));
-// }
 exports.modifyUserProfile = (req, res, next) => {
+    const id = req.params.id;
     const userObject = req.file ?
     {
     ...JSON.parse(req.body.user),
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
-    // db.User.update({_id: req.params.id}, {...userObject, _id: req.params.id})
-    db.User.update(userObject)
-    .then(user => res.status(200).json({message: 'Profil modifié'}))
-    .catch(error => res.status(400).json({ error}))
+    
+    db.User.findOne({
+        where: { id: id },
+    })
+    .then(userFound => {
+        if(userFound) {
+            db.User.update(userObject, {
+                where: { id: id}
+            })
+            .then(user => res.status(200).json({message: 'Profil modifié'}))
+            .catch(error => res.status(400).json({ error}))
+        }
+        else {
+            res.status(404).json({ error: "Utilisateur non trouvé" });
+        }
+    })
+    .catch(error => res.status(500).json({ error }));
 }
+
 
 // Permet à un utilisateur de supprimer son compte
 exports.deleteAccount = (req, res, next) => {

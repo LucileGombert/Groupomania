@@ -1,37 +1,41 @@
 <template>
   <div class="profile">
-    <Navbar msg="Bienvenue sur Groupomania, votre nouveau réseau social d'entreprise !"/>
-    
-    <h1>Bienvenue <span>xxx</span> !</h1>
-    <div class="profile__content">
-      <div class="profile__content__photo">
-        <h2 class="profile__content__photo__title">Photo de profil</h2>
-        <img class="profile__content__photo__img" src="https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_960_720.png" alt="">
-        <button class="profile__content__photo__button">Changer ma photo de profil</button>
+    <Navbar/>
+    <div >
+      <h1 v-if="user">Bienvenue {{ user.username }} !</h1>
+      <h1 v-if="!user">Bienvenue  !</h1>
+      <div class="profile__content">
+        <div class="profile__content__photo">
+          <h2 class="profile__content__photo__title">Photo de profil</h2>
+          <img class="profile__content__photo__img" src="https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_960_720.png" alt="">
+          <button class="profile__content__photo__button">Changer ma photo de profil</button>
+        </div>
+        <div class="profile__content__info">
+          <h2>Vos informations</h2>
+          <p>Pseudo</p>
+          <div class="profile__content__info__item">test1</div>
+          <p>Email</p>
+          <div class="profile__content__info__item">test01@groupomania.com</div>
+        </div>
       </div>
-      <div class="profile__content__info">
-        <h2>Vos informations</h2>
-        <p>Pseudo</p>
-        <div class="profile__content__info__item">test1</div>
-        <p>Email</p>
-        <div class="profile__content__info__item">test01@groupomania.com</div>
-      </div>
+      <modale v-bind:revele="revele" v-bind:toggleModale='toggleModale'></modale>
+      <button class="profile__button" v-on:click="toggleModale">Supprimer mon compte</button>
     </div>
-    <modale v-bind:revele="revele" v-bind:toggleModale='toggleModale'></modale>
-    <button class="profile__button" v-on:click="toggleModale">Supprimer mon compte</button>
-    
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import Navbar from '@/components/Navbar.vue'
 import Modale from '@/components/Modale.vue'
+
 
 export default {
   name: 'Profile',
   data(){
     return {
-      revele: false
+      revele: false,
+      user: null
     }
   },
   components: {
@@ -42,6 +46,15 @@ export default {
     toggleModale: function() {
       this.revele = !this.revele
     }
+  },
+  async created() {
+    const id = localStorage.getItem('userId');
+    const response = await axios.get('http://localhost:3000/api/user/' + id, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('token')
+      }
+    });
+    this.user = response.data;
   }
 }
 </script>
@@ -75,6 +88,7 @@ export default {
         font-weight: bold;
         padding: 0.4rem;
         margin: 1rem;
+        outline-style: none;
         &:hover {
           border: 2px solid #ff6363;
           color: #ff6363;
@@ -97,6 +111,7 @@ export default {
     font-weight: bold;
     padding: 0.9rem;
     margin: 1rem;
+    outline-style: none;
     &:hover {
       border: 3px solid #ff6363;
       color: #ff6363;
