@@ -44,10 +44,10 @@
                 });
                 
                 localStorage.setItem('token', response.data.token);
-                localStorage.setItem('userId', parseInt(response.data.id));
+                localStorage.setItem('userId', response.data.userId);
                 localStorage.setItem('username', response.data.username);
-
                 this.$router.push('post');
+                console.log(response.data);
             }
         }
     }
@@ -71,7 +71,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 30%;
+            width: 40%;
             border: 3px solid #3f3d56;
             border-radius: 25px;
             margin-top: 2rem;

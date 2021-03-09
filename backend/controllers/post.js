@@ -5,7 +5,6 @@ const db = require('../models/index');
 
 // Permet de créer un nouveau message
 exports.createPost = (req, res, next) => {   
-    const title = req.body.title;
     const content = req.body.content;
 
     const token = req.headers.authorization.split(' ')[1];
@@ -13,12 +12,12 @@ exports.createPost = (req, res, next) => {
     const userId = decodedToken.userId;
     
     // Permet de vérifier que tous les champs sont complétés
-    if (title == null || title == '' || content == null || content == '') {
+    if (content == null || content == '') {
         return res.status(400).json({ error: 'Tous les champs doivent être renseignés' });
     } 
 
     // Permet de contrôler la longueur du titre et du contenu du message
-    if (title.length <= 2 || content.length <= 4) {
+    if (content.length <= 4) {
         return res.status(400).json({ error: 'Le titre doit contenir au moins 2 caractères et le contenu doit contenir au moins 4 caractères' });
     }
     
@@ -28,9 +27,9 @@ exports.createPost = (req, res, next) => {
     .then(userFound => {
         if(userFound) {
             const post = db.Post.build({
-                title: req.body.title, 
                 content: req.body.content,
                 link: '',
+                // link: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
                 likes: 0,
                 UserId: userFound.id
             })
@@ -101,7 +100,7 @@ exports.modifyPost = (req, res, next) => {
     .then(postFound => {
         if(postFound) {
             db.Post.update(postObject, {
-                where: { postId: req.params.postId}
+                where: { id: req.params.postId}
             })
             .then(post => res.status(200).json({message: 'Message modifié'}))
             .catch(error => res.status(400).json({ error}))

@@ -1,16 +1,16 @@
 <template> 
     <div class="modaleBloc" v-if="revele">
-        <div class="modaleBloc__overlay" v-on:click="toggleModale"></div>
+        <div class="modaleBloc__overlay" v-on:click="toggleModaleUpdate"></div>
         <button class="profile__button" @click="$router.push('http://localhost:8080/')">Supprimer mon compte</button>
         <div class="modaleBloc__card">
             <div class="modaleBloc__card__title">
-                <h2>Etes-vous sûr de vouloir supprimer votre compte ?</h2>
-                <p>(Cette action est irréversible)</p>
+                <h2>Vous souhaitez modifier votre pseudo ?</h2>
+                
                 <div class="modaleBloc__card__title__close">
-                    <i class="far fa-times-circle fa-2x modaleBloc__card__title__close" v-on:click="toggleModale"></i>
+                    <i class="far fa-times-circle fa-2x modaleBloc__card__title__close" v-on:click="toggleModaleUpdate"></i>
                 </div>
             </div>
-            <button class="modaleBloc__card__button" @click="deleteAccount">Oui, je supprime mon compte</button>
+            <button class="modaleBloc__card__button" @click="deleteAccount">Enregistrer les modifications</button>
         </div>
     </div>
 </template>
@@ -20,19 +20,19 @@
     import axios from 'axios'
 
     export default {
-        name: 'Modale',
-        props: ['revele', 'toggleModale', 'userId', 'token'],
+        name: 'ModaleUpdateProfile',
+        props: ['revele', 'toggleModaleUpdate'],
         methods: {
-            deleteAccount(){
-                const id = localStorage.getItem('userId');
-                axios.delete('http://localhost:3000/api/user/' + id, {
+            UpdateAccount(){
+                const userId = localStorage.getItem('userId');
+                axios.put('http://localhost:3000/api/user/' + userId, {
                     headers: {
                         'Content-Type' : 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('token')
                     }
                 })
                 .then(() => {
-                    console.log("Profil supprimé");
+                    console.log("Profil mis à jour");
                     localStorage.clear();
                     this.$router.push('/');
                 })

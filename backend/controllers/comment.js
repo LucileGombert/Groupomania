@@ -54,7 +54,8 @@ exports.getOneComment = (req, res, next) => {
 // Permet d'afficher tous les commentaires
 exports.getAllComments = (req, res, next) => {
     db.Comment.findAll({
-        order: [['updatedAt', "DESC"], ['createdAt', "DESC"]] ,
+        order: [['updatedAt', "DESC"], ['createdAt', "DESC"]],
+        where: { postId: req.params.postId },
         include: [{
             model: db.User,
             attributes: [ 'username' ]

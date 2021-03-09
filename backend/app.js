@@ -1,7 +1,8 @@
 // Imports
 const express = require('express');
 const bodyParser = require('body-parser');
-
+// Permet d'accéder au chemin du système de fichiers
+const path = require('path');
 
 // Permet de créer l'application express
 const app = express();
@@ -26,10 +27,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-// Permet d'accéder aux routes pour les utilisateurs et les publications
+// Permet d'accéder aux routes pour les utilisateurs, les publications et les images
 app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
-
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Permet d'exporter l'application express pour pouvoir y accéder depuis les autres fichiers du projet 
 module.exports = app;

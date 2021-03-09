@@ -1,34 +1,43 @@
 <template> 
     <div class="modaleBloc" v-if="revele">
         <div class="modaleBloc__overlay" v-on:click="toggleModale"></div>
-        
+        <button class="profile__button" @click="$router.push('http://localhost:8080/')">Supprimer mon compte</button>
         <div class="modaleBloc__card">
             <div class="modaleBloc__card__title">
-                <h2>Souhaitez-vous vraiment vous déconnecter ?</h2>
-                
+                <h2>Etes-vous sûr de vouloir supprimer votre compte ?</h2>
+                <p>(Cette action est irréversible)</p>
                 <div class="modaleBloc__card__title__close">
                     <i class="far fa-times-circle fa-2x modaleBloc__card__title__close" v-on:click="toggleModale"></i>
                 </div>
             </div>
-            <button class="modaleBloc__card__button" @click="handleClick">Oui, je me déconnecte</button>
+            <button class="modaleBloc__card__button" @click="deleteAccount">Oui, je supprime mon compte</button>
         </div>
     </div>
 </template>
 
 
 <script>
+    import axios from 'axios'
+
     export default {
-        name: 'ModaleLogout',
+        name: 'Modale',
         props: ['revele', 'toggleModale'],
         methods: {
-            handleClick() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userId');
-            localStorage.removeItem('username');
-            this.$store.dispatch('user', null);
-            this.$router.push('http://localhost:8080/#/');
+            deleteAccount(){
+                const id = localStorage.getItem('userId');
+                axios.delete('http://localhost:3000/api/user/' + id, {
+                    headers: {
+                        'Content-Type' : 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                })
+                .then(() => {
+                    console.log("Profil supprimé");
+                    localStorage.clear();
+                    this.$router.push('/');
+                })
             }
-        }, 
+        }
     }
 </script>
 
