@@ -40,6 +40,10 @@ exports.signup = (req, res, next) => {
 
     // Permet de vérifier que l'utilisateur que l'on souhaite créer n'existe pas déjà
     db.User.findOne({
+        attributes: ['username'],
+        where: { username: username}
+    })
+    db.User.findOne({
         attributes: ['email'],
         where: { email: email}
     })
@@ -80,6 +84,7 @@ exports.login = (req, res, next) => {
                 }
                 res.status(200).json({
                     userId: user.id,
+                    isAdmin: user.isAdmin,
                     username: user.username,
                     token: jwt.sign(
                         {userId: user.id},
@@ -101,7 +106,7 @@ exports.login = (req, res, next) => {
 exports.getUserProfile = (req, res, next) => {
     const id = req.params.id;
     db.User.findOne({
-        attributes: [ 'id', 'username', 'email' ],
+        attributes: [ 'id', 'username', 'email', 'isAdmin', 'imageProfile' ],
         where: { id: id }
     })
     .then(user => {
@@ -121,7 +126,7 @@ exports.modifyUserProfile = (req, res, next) => {
     const userObject = req.file ?
     {
     ...JSON.parse(req.body.user),
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    imageProfile: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
     
     db.User.findOne({
@@ -132,7 +137,7 @@ exports.modifyUserProfile = (req, res, next) => {
             db.User.update(userObject, {
                 where: { id: id}
             })
-            .then(user => res.status(200).json({message: 'Profil modifié'}))
+            .then(user => res.status(200).json({message: 'Votre profil a bien été modifié !'}))
             .catch(error => res.status(400).json({ error}))
         }
         else {

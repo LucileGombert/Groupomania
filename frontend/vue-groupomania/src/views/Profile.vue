@@ -1,27 +1,37 @@
 <template>
-  <div class="profile">
+  <div>
     <Navbar/>
     <div>
       <h1 v-if="user">Bienvenue {{ user.username }} !</h1>
-      <h1 v-if="!user">Bienvenue !</h1>
-      <div class="profile__content">
-        <div class="profile__content__photo">
-          <h2 class="profile__content__photo__title">Photo de profil</h2>
-          <img class="profile__content__photo__img" src="https://cdn.pixabay.com/photo/2017/06/13/12/53/profile-2398782_960_720.png" alt="">
-          <button class="profile__smallButton">Changer ma photo de profil</button>
+      <div class="profile">
+        <h2>Vos informations</h2>
+
+        <ProfileImage :src="url || user.imageProfile" class="profile__image"/>
+        <!-- <img :src="url || user.imageProfile || 'user-circle-solid.svg'" class="image" alt="Photo de profil"/> -->
+        
+        <div class="profile__info">
+          <p class="profile__info__title">Pseudo</p>
+          <div class="profile__info__text">{{ user.username }}</div>
+          <p class="profile__info__title">Email</p>
+          <div class="profile__info__text">{{ user.email }}</div>
         </div>
-        <div class="profile__content__info">
-          <h2>Vos informations</h2>
-          <p>Pseudo</p>
-          <div class="profile__content__info__item">{{ user.username }}</div>
-          <p>Email</p>
-          <div class="profile__content__info__item">{{ user.email }}</div>
-          <ModaleUpdateProfile v-bind:revele="revele" v-bind:toggleModaleUpdate='toggleModaleUpdate'></ModaleUpdateProfile>
-          <button class="profile__smallButton" v-on:click="toggleModaleUpdate"><i class="far fa-edit"></i></button>
+        <div class="profile__modify">
+          <form method="post" enctype="multipart/form-data">
+            <label for="file">
+              <!-- <i @click="uploadFile" class="far fa-edit fa-2x profile__iconButton"></i> -->
+              <input type="file" @change="fileUpload" ref="file" accept="image/*" name="file" id="file">
+            </label>
+            <!-- <input type="file" @change="onFileSelected" ref="fileUpload" accept="image/*" name="file" id="file"> -->
+            <!-- <button @click="modifyProfile" class="profile__smallButton">Enregister</button> -->
+            <button @click="submitFile" class="profile__smallButton">Enregister</button>
+          </form>
+          
         </div>
+        <!-- <UpdateProfile v-bind:revele="revele" v-bind:displayModale='displayModale'/> -->
+        <!-- <button class="profile__smallButton" @click="modifyProfile"><i class="far fa-edit"></i></button>  -->
       </div>
-      <ModaleDeleteAccount v-bind:revele="revele" v-bind:toggleModale='toggleModale'></ModaleDeleteAccount>
-      <button class="profile__bigButton" v-on:click="toggleModale">Supprimer mon compte</button>
+      <ModaleDeleteAccount v-bind:revele="revele" v-bind:displayModale='displayModale'/>
+      <button class="profile__bigButton" v-on:click="displayModale">Supprimer mon compte</button>
     </div>
   </div>
 </template>
@@ -30,114 +40,170 @@
 import axios from 'axios'
 import Navbar from '@/components/Navbar.vue'
 import ModaleDeleteAccount from '@/components/ModaleDeleteAccount.vue'
-import ModaleUpdateProfile from '@/components/ModaleUpdateProfile.vue'
+// import UpdateProfile from '@/components/UpdateProfile.vue'
+import ProfileImage from '../components/ProfileImage'
 
 export default {
   name: 'Profile',
   data(){
     return {
       revele: false,
-      user: ""
+      user: "",
+      selectedFile: null,
+      url: null,
+      imageProfile: '',
+      file: ''
     }
   },
-  // created() {
-  //   this.displayUser();
-  // },
   components: {
     Navbar,
     ModaleDeleteAccount,
-    ModaleUpdateProfile
+    // UpdateProfile
+    ProfileImage,
   },
   methods: {
-    toggleModale: function() {
+    fileUpload() {
+      this.file = this.$refs.file.files[0];
+    },
+    submitFile() {
+      let formData = new FormData();
+      formData.append('file', this.file);
+
+      const userId = localStorage.getItem('userId');
+      axios.put('http://localhost:3000/api/user/' + userId, formData, {
+          headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': 'Bearer ' + localStorage.getItem('token')
+          }
+      })
+      .then(() => {
+          alert("Votre profil a bien été modifié !");
+      })
+      .catch(error => {
+          alert(JSON.stringify(error.response.data))
+      })
+    },
+
+
+
+    displayModale() {
       this.revele = !this.revele
     },
-    toggleModaleUpdate: function() {
-      this.revele = !this.revele
-    }
+    uploadFile () {
+      this.$refs.fileUpload.click()
+    },
+    onFileSelected(event) {
+      this.url = URL.createObjectURL(event.target.files[0])
+      this.selectedFile = event.target.files[0]
+    },
+    modifyProfile() {
+      const userId = localStorage.getItem('userId');
+      axios.put('http://localhost:3000/api/user/' + userId, {
+          imageProfile: this.imageProfile,
+      },{
+          headers: {
+              'Content-Type' : 'application/json',
+              'Authorization': 'Bearer ' + localStorage.getItem('token')
+          }
+      })
+      .then(() => {
+          alert("Votre profil a bien été modifié !");
+      })
+      .catch(error => {
+          alert(JSON.stringify(error.response.data))
+      })
+    },
   },
   async created() {
     const userId = localStorage.getItem('userId');
 
-    
     const response = await axios.get('http://localhost:3000/api/user/' + userId, {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('token')
       }
     });
     this.user = response.data;
-  },
-  // displayUser() {
-  //   const id = localStorage.getItem('userId');
-  //   axios.get('http://localhost:3000/api/user/' + id, {
-  //     headers: {
-  //     Authorization: 'Bearer ' + localStorage.getItem('token')
-  //     }
-  //   })
-  //   .then(reponse => {
-  //       this.user.push(reponse.data);
-  //   })
-  // }
+    console.log('user', response.data.imageProfile);
+  }
 }
 </script>
 
 <style scoped lang="scss">
-.profile {
-  &__content {
+  h1, h2 {
+    margin-top: 2rem;
+  }
+  .profile {
     display: flex;
-    justify-content: center;
-    &__photo, &__info {
+    flex-direction: column;
+    align-items: center;
+    min-width: 40%;
+    max-width: 60%;
+    margin: 3rem auto;
+    background: #ffb1b1;
+    border-radius: 25px;
+    @media (max-width: 500px) {
+      min-width: 80%;
+    }
+    &__image {
+      margin-top: 1rem;
+    }
+    &__info {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      border-radius: 25px;
-      background: #ffb1b1;
+      text-align: left;
       margin: 1rem;
-      width: 30rem;
-      height: 20rem;
       &__title {
-        margin-bottom: 2rem;
+        font-weight: bold;
+        margin: 1rem 0 0.4rem 0;
       }
-      &__img {
-        width: 5rem;
-        margin: 2rem 0 1rem 0;
-      }
-      &__item {
+      &__text {
         background: white;
         border-radius: 10px;
         padding: 0.5rem;
         width: 15rem;
-        text-align: start;
+      }
+    }
+    &__modify>input {
+      display: none; 
+    }
+    &__iconButton:hover {
+        color: white;
+        cursor: pointer;
+    }
+    &__smallButton {
+      border: 2px solid #3f3d56;
+      border-radius: 25px;
+      color: #3f3d56;
+      font-size: 15px;
+      font-weight: bold;
+      padding: 0.4rem;
+      margin: 1rem;
+      outline-style: none;
+      background: white;
+      &:hover {
+        color: #ff6363;
+        cursor: pointer;
+      }
+      
+    }
+    &__bigButton {
+      border: 3px solid #3f3d56;
+      border-radius: 25px;
+      color: #3f3d56;
+      font-size: 15px;
+      font-weight: bold;
+      padding: 0.9rem;
+      margin: 1rem;
+      outline-style: none;
+      &:hover {
+        border: 3px solid #ff6363;
+        color: #ff6363;
+        cursor: pointer;
       }
     }
   }
-  &__smallButton {
-    border: 2px solid #3f3d56;
-    border-radius: 25px;
-    color: #3f3d56;
-    font-size: 15px;
-    font-weight: bold;
-    padding: 0.4rem;
-    margin: 1rem;
-    outline-style: none;
-    &:hover {
-      border: 2px solid #ff6363;
-      color: #ff6363;
-    }
+  .image {
+    width: 4rem;
+    border-radius: 100%;
   }
-  &__bigButton {
-    border: 3px solid #3f3d56;
-    border-radius: 25px;
-    color: #3f3d56;
-    font-size: 15px;
-    font-weight: bold;
-    padding: 0.9rem;
-    margin: 1rem;
-    outline-style: none;
-    &:hover {
-      border: 3px solid #ff6363;
-      color: #ff6363;
-    }
-  }
-}
 </style>

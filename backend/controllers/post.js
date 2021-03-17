@@ -26,13 +26,25 @@ exports.createPost = (req, res, next) => {
     })
     .then(userFound => {
         if(userFound) {
+            const postObject = req.body;
+            
+            if(req.file) {
+                const postObject = JSON.parse(req.body.post);
+                // postObject.imagePost = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                imagePost = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                // imagePost = (req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null)
+            }
             const post = db.Post.build({
-                content: req.body.content,
-                link: '',
-                // link: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-                likes: 0,
+                ...postObject,
                 UserId: userFound.id
             })
+            
+            // const post = db.Post.build({
+            //     content: req.body.content,
+            //     imagePost: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+            //     UserId: userFound.id
+            // })
+
             post.save()
                 .then(() => res.status(201).json({ message: 'Votre message a bien été créé !' }))
                 .catch(error => res.status(400).json({ error }));
@@ -41,6 +53,19 @@ exports.createPost = (req, res, next) => {
         }
     })
     .catch(error => res.status(500).json({ error }));
+
+
+    exports.createSauce = (req, res, next) => {
+        const sauceObject = JSON.parse(req.body.sauce);
+        delete sauceObject._id;
+        const sauce = new Sauce({
+            ...sauceObject,
+            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        });
+        sauce.save()
+            .then(() => res.status(201).json({message: 'Sauce enregistrée'}))
+            .catch(error => res.status(400).json({error}));
+    };
 };
 
 
@@ -91,7 +116,7 @@ exports.modifyPost = (req, res, next) => {
     const postObject = req.file ?
     {
     ...JSON.parse(req.body.post),
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    imagePost: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     } : { ...req.body };
 
     db.Post.findOne({
@@ -102,7 +127,7 @@ exports.modifyPost = (req, res, next) => {
             db.Post.update(postObject, {
                 where: { id: req.params.postId}
             })
-            .then(post => res.status(200).json({message: 'Message modifié'}))
+            .then(post => res.status(200).json({message: 'Votre message a bien été modifié !'}))
             .catch(error => res.status(400).json({ error}))
         } else {
             res.status(404).json({ error: "Message non trouvé" });

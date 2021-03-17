@@ -28,9 +28,10 @@ app.use(bodyParser.json());
 
 
 // Permet d'accéder aux routes pour les utilisateurs, les publications et les images
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
-app.use('/images', express.static(path.join(__dirname, 'images')));
+
 
 // Permet d'exporter l'application express pour pouvoir y accéder depuis les autres fichiers du projet 
 module.exports = app;

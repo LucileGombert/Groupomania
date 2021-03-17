@@ -22,11 +22,12 @@
         props: ['revele', 'toggleModale'],
         methods: {
             handleClick() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userId');
-            localStorage.removeItem('username');
-            this.$store.dispatch('user', null);
-            this.$router.push('http://localhost:8080/#/');
+                localStorage.removeItem('token');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('username');
+                localStorage.removeItem('isAdmin');
+                this.$store.dispatch('user', null);
+                this.$router.push('http://localhost:8080/#/');
             }
         }, 
     }
@@ -63,6 +64,9 @@
                 padding: 3rem 6rem 1.5rem 6rem;
                 & h2 {
                     margin-top: 0px;
+                    @media (max-width: 500px) {
+                        font-size: 20px;
+                    }
                 }
                 &__close {
                     position: absolute;

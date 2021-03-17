@@ -54,7 +54,7 @@ exports.getOneComment = (req, res, next) => {
 // Permet d'afficher tous les commentaires
 exports.getAllComments = (req, res, next) => {
     db.Comment.findAll({
-        order: [['updatedAt', "DESC"], ['createdAt', "DESC"]],
+        order: [['updatedAt', "ASC"], ['createdAt', "ASC"]],
         where: { postId: req.params.postId },
         include: [{
             model: db.User,
@@ -85,7 +85,7 @@ exports.modifyComment = (req, res, next) => {
             db.Comment.update(req.body, {
                 where: { id: req.params.commentId}
             })
-            .then(comment => res.status(200).json({message: 'Votre commentaire a été modifié'}))
+            .then(comment => res.status(200).json({message: 'Votre commentaire a bien été modifié !'}))
             .catch(error => res.status(400).json({ error}))
         } else {
             res.status(404).json({ error: "Commentaire non trouvé" });

@@ -19,3 +19,25 @@ server.listen(process.env.PORT, () => {
     console.log(`Listening on port ${process.env.PORT}`);
 });
 
+
+// Socket.io
+// const io = require('socket.io')(server);
+// const cfg = require('./config.json');
+// const tw = require('node-tweet-stream')(cfg);
+
+// tw.track('socket.io');
+// tw.track('javascript');
+
+// io.on('connection', function(socket) {
+//     console.log('A user is connected');
+//     socket.on('chatPost', function(post) {
+//         console.log('message reçu : ' + post);
+//     })
+// })
+
+// io.on('connection', () => {
+//     console.log('A user is connected');
+//     socket.on('chatPost', function(post) {
+//         console.log('message reçu : ' + post);
+//     })
+// })

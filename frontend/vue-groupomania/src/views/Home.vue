@@ -1,23 +1,27 @@
 <template>
     <div class="home">
-        <img alt="Logo Groupomania" src="../assets/iconLong450.png">
+        <img class="home__title" src="../assets/iconLong450.png" alt="Logo de Groupomania">
+        
+        <div class="home__display">
+            <img class="home__display__picture" src="../assets/bottomImage450.png" alt="Représentation de trois personnes qui discutent via un chat">
+           
+            <div class="home__display__login">
+                <form @submit.prevent="login" class="home__display__login__form">
+                    <h1 class="home__display__login__form__title">Se connecter</h1>
 
-        <div class="display">
-            <img alt="Vue logo" src="../assets/bottomImage450.png" class="display__picture">
-            <div class="login">
-                <form @submit.prevent="handleSubmit" class="login__form">
-                    <h1 class="login__form__title">Se connecter</h1>
-                    <div class="login__form__input">
-                        <label for="mail" class="login__form__input__label">Email</label>
+                    <div class="home__display__login__form__input">
+                        <label for="mail" class="home__display__login__form__input__label">Email</label>
                         <input type="email" v-model="email" id="mail" name="mail">
                     </div>
-                    <div class="login__form__input">
-                        <label for="password" class="login__form__input__label">Mot de passe</label>
+
+                    <div class="home__display__login__form__input">
+                        <label for="password" class="home__display__login__form__input__label">Mot de passe</label>
                         <input type="password" v-model="password" id="password" name="password">
                     </div>
-                    <button class="login__form__button">Connexion</button>
 
-                    <p>Vous n'avez pas encore de compte ? <router-link to="/signup" class="login__form__signup">S'inscrire</router-link></p>
+                    <button class="home__display__login__form__button">Connexion</button>
+
+                    <p>Vous n'avez pas encore de compte ? <router-link to="/signup" class="home__display__login__form__signup">S'inscrire</router-link></p>
                 </form>
             </div>
         </div> 
@@ -37,17 +41,25 @@
             }
         },
         methods: {
-            async handleSubmit() {
-                const response = await axios.post('http://localhost:3000/api/user/login', {
+            login() {
+                axios.post('http://localhost:3000/api/user/login', {
                     email: this.email,
                     password: this.password,
-                });
-                
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('userId', response.data.userId);
-                localStorage.setItem('username', response.data.username);
-                this.$router.push('post');
-                console.log(response.data);
+                })
+                .then(response => {
+                    console.log(response);
+                    
+                    // Permet de recharger la page sans que l'utilisateur soit déconnecté
+                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('userId', response.data.userId);
+                    localStorage.setItem('username', response.data.username);
+                    localStorage.setItem('isAdmin', response.data.isAdmin);
+                    
+                    this.$router.push('post');
+                })
+                .catch(error => {
+                    alert(JSON.stringify(error.response.data))
+                })
             }
         }
     }
@@ -55,60 +67,84 @@
 
 
 <style scoped lang="scss">
-    .display {
-        margin-top: 2rem;
-        &__picture {
-            float: left;
-            padding-top: 5rem;
-            margin-left: 3rem;
+    .home {
+        &__title {
+            @media (max-width: 930px) {
+                max-width: 400px;
+                width: 90%;
+            }
         }
-    }
-
-    .login {
-        display: flex;
-        justify-content: center;
-        &__form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 40%;
-            border: 3px solid #3f3d56;
-            border-radius: 25px;
+        &__display {
             margin-top: 2rem;
-            margin-left: -2rem;
-            padding: 1rem;
-            &__title {
-                margin-bottom: 3rem;
-                font-size: 27px;
-            }
-            &__input {
+            @media (max-width: 930px) {
                 display: flex;
-                flex-direction: column;
-                margin-bottom: 2rem;
-                width: 70%;
-                &__label {
-                    text-align: start;
-                    font-weight: bolder;
-                }
+                flex-direction: column-reverse;
             }
-            &__button {
-                border: 3px solid #3f3d56;
-                border-radius: 25px;
-                color: #3f3d56;
-                font-size: 15px;
-                font-weight: bold;
-                padding: 0.9rem;
-                margin: 1rem;
-                outline-style: none;
-                &:hover {
-                    border: 3px solid #ff6363;
-                    color: #ff6363;
+            &__picture {
+                float: left;
+                padding-top: 5rem;
+                margin-left: 3rem;
+                @media (max-width: 1170px) {
+                    max-width: 350px;
                 }
+                @media (max-width: 930px) {
+                    max-width: 250px;
+                    margin: auto;
+                } 
             }
-            &__signup {
-                font-weight: bold;
-                text-decoration: none;
-                color: #ff6363;
+            &__login {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                &__form {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    width: 40%;
+                    border: 3px solid #3f3d56;
+                    border-radius: 25px;
+                    margin-top: 2rem;
+                    margin-left: -2rem;
+                    padding: 1rem;
+                    @media (max-width: 930px) {
+                        min-width: 200px;
+                        margin: auto;
+                    }
+                    &__title {
+                        margin-bottom: 3rem;
+                        font-size: 27px;
+                    }
+                    &__input {
+                        display: flex;
+                        flex-direction: column;
+                        margin-bottom: 2rem;
+                        width: 70%;
+                        &__label {
+                            text-align: start;
+                            font-weight: bolder;
+                        }
+                    }
+                    &__button {
+                        border: 3px solid #3f3d56;
+                        border-radius: 25px;
+                        color: #3f3d56;
+                        font-size: 15px;
+                        font-weight: bold;
+                        padding: 0.9rem;
+                        margin: 1rem;
+                        outline-style: none;
+                        &:hover {
+                            border: 3px solid #ff6363;
+                            color: #ff6363;
+                            cursor: pointer;
+                        }
+                    }
+                    &__signup {
+                        font-weight: bold;
+                        text-decoration: none;
+                        color: #ff6363;
+                    }
+                }
             }
         }
     }

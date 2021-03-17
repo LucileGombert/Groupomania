@@ -1,4 +1,5 @@
 'use strict';
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Likes', {
@@ -22,10 +23,6 @@ module.exports = {
           key: 'id'
         }
       },
-      // isLike : {
-      //   allowNull: false,
-      //   type: Sequelize.INTEGER
-      // },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

@@ -19,6 +19,7 @@
     "mysql2": "^2.2.5",
     "nodemon": "^2.0.7",
     "password-validator": "^5.1.1",
-    "sequelize": "^6.5.0"
+    "sequelize": "^6.5.0",
+    "soket.io": "0.0.1-security"
   }
 }
