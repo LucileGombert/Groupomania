@@ -29,28 +29,6 @@ exports.createComment = (req, res, next) => {
 }
 
 
-// Permet d'afficher un commentaire
-exports.getOneComment = (req, res, next) => {
-    console.log(req.params.commentId);
-    
-    db.Comment.findOne({
-        where: { id: req.params.commentId },
-        include: [{
-            model: db.User,
-            attributes: [ 'username' ]
-        }]
-    })
-    .then(commentFound => {
-        if(commentFound) {
-            res.status(200).json(commentFound);
-        } else {
-            res.status(404).json({ error: 'Commentaire non trouvé'})
-        }
-    })
-    .catch(error => res.status(500).json({ error }));
-}
-
-
 // Permet d'afficher tous les commentaires
 exports.getAllComments = (req, res, next) => {
     db.Comment.findAll({
@@ -74,39 +52,16 @@ exports.getAllComments = (req, res, next) => {
 }
 
 
-// Permet de modifier un commentaire
-exports.modifyComment = (req, res, next) => {
-    db.Comment.findOne({
-        attributes: ['id'],
-        where: { id: req.params.commentId },
-    })
-    .then(commentFound => {
-        if(commentFound) {
-            db.Comment.update(req.body, {
-                where: { id: req.params.commentId}
-            })
-            .then(comment => res.status(200).json({message: 'Votre commentaire a bien été modifié !'}))
-            .catch(error => res.status(400).json({ error}))
-        } else {
-            res.status(404).json({ error: "Commentaire non trouvé" });
-        }
-    })
-    .catch(error => res.status(500).json({ error }));
-}
-
-
 // Permet de supprimer un commentaire
 exports.deleteComment = (req, res, next) => {
     db.Comment.findOne({
         attributes: ['id'],
         where: { id: req.params.commentId }
-      
     })
     .then(commentFound => {
         if(commentFound) {
             db.Comment.destroy({ 
                 where: { id: req.params.commentId } 
-                
             })
             .then(() => res.status(200).json({ message: 'Votre commentaire a été supprimé' }))
             .catch(() => res.status(500).json({ error }));

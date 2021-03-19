@@ -1,6 +1,5 @@
 // Imports
 const bcrypt = require('bcrypt');
-const passwordValidator = require('password-validator');
 const jwt = require('jsonwebtoken');
 
 require('dotenv').config({path: './config/.env'});
@@ -40,12 +39,11 @@ exports.signup = (req, res, next) => {
 
     // Permet de vérifier que l'utilisateur que l'on souhaite créer n'existe pas déjà
     db.User.findOne({
-        attributes: ['username'],
-        where: { username: username}
-    })
-    db.User.findOne({
-        attributes: ['email'],
-        where: { email: email}
+        attributes: ['username' || 'email'],
+        where: { 
+            username: username, 
+            email: email
+        }
     })
     .then(userExist => {
         if(!userExist) {

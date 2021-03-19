@@ -1,6 +1,8 @@
 // Imports
 const express = require('express');
 const bodyParser = require('body-parser');
+// const cors = require('cors');
+
 // Permet d'accéder au chemin du système de fichiers
 const path = require('path');
 
@@ -9,6 +11,7 @@ const app = express();
 
 
 // Middleware CORS
+// app.use(cors());
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -17,9 +20,10 @@ app.use((req, res, next) => {
 });
 
 
-// Permet d'importer les routers user et post
+// Permet d'importer les routers user, post 
 const userRoutes = require('./routes/user');
 const postRoutes = require('./routes/post');
+const commentRoutes = require('./routes/comment');
 
 
 // Transforme le corps de la requête en objet JS
@@ -31,6 +35,7 @@ app.use(bodyParser.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
+app.use('/api/comment', commentRoutes);
 
 
 // Permet d'exporter l'application express pour pouvoir y accéder depuis les autres fichiers du projet 

@@ -1,7 +1,7 @@
 // Imports
 const jwt = require("jsonwebtoken");
 const db = require('../models/index');
-
+const fs = require('fs');
 
 // Permet de créer un nouveau message
 exports.createPost = (req, res, next) => {   
@@ -30,9 +30,7 @@ exports.createPost = (req, res, next) => {
             
             if(req.file) {
                 const postObject = JSON.parse(req.body.post);
-                // postObject.imagePost = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
                 imagePost = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-                // imagePost = (req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null)
             }
             const post = db.Post.build({
                 ...postObject,
@@ -53,19 +51,6 @@ exports.createPost = (req, res, next) => {
         }
     })
     .catch(error => res.status(500).json({ error }));
-
-
-    exports.createSauce = (req, res, next) => {
-        const sauceObject = JSON.parse(req.body.sauce);
-        delete sauceObject._id;
-        const sauce = new Sauce({
-            ...sauceObject,
-            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        });
-        sauce.save()
-            .then(() => res.status(201).json({message: 'Sauce enregistrée'}))
-            .catch(error => res.status(400).json({error}));
-    };
 };
 
 
@@ -145,12 +130,14 @@ exports.deletePost = (req, res, next) => {
     })
     .then(postFound => {
         if(postFound) {
-            db.Post.destroy({ 
-                where: { id: req.params.postId } 
+            const filename = post.imagePost.split('/images/')[1];
+            fs.unlink(`images/${filename}`, () => {
+                db.Post.destroy({ 
+                    where: { id: req.params.postId } 
+                })
+                .then(() => res.status(200).json({ message: 'Votre message a été supprimé' }))
+                .catch(() => res.status(500).json({ error }));
             })
-            .then(() => res.status(200).json({ message: 'Votre message a été supprimé' }))
-            .catch(() => res.status(500).json({ error }));
-            
         } else {
             return res.status(404).json({ error: 'Message non trouvé'})
         }
