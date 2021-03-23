@@ -1,6 +1,8 @@
 // Imports
 const express = require('express');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 // const cors = require('cors');
 
 // Permet d'accéder au chemin du système de fichiers
@@ -30,6 +32,13 @@ const commentRoutes = require('./routes/comment');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// Permet de configurer les en-têtes HTTP de manière sécurisée
+app.use(helmet());
+
+// Permet de valider les entrées utilisateur et de remplacer les caractères interdits par "_"
+app.use(mongoSanitize({
+    replaceWith: '_'
+}));
 
 // Permet d'accéder aux routes pour les utilisateurs, les publications et les images
 app.use('/images', express.static(path.join(__dirname, 'images')));

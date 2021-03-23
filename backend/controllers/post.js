@@ -77,7 +77,7 @@ exports.getOnePost = (req, res, next) => {
 // Permet d'afficher tous les messages
 exports.getAllPosts = (req, res, next) => {
     db.Post.findAll({
-        order: [['updatedAt', "DESC"], ['createdAt', "DESC"]] ,
+        order: [['createdAt', "DESC"]] ,
         include: [{
             model: db.User,
             attributes: [ 'username' ]
@@ -130,14 +130,20 @@ exports.deletePost = (req, res, next) => {
     })
     .then(postFound => {
         if(postFound) {
-            const filename = post.imagePost.split('/images/')[1];
-            fs.unlink(`images/${filename}`, () => {
-                db.Post.destroy({ 
-                    where: { id: req.params.postId } 
-                })
-                .then(() => res.status(200).json({ message: 'Votre message a été supprimé' }))
-                .catch(() => res.status(500).json({ error }));
+            db.Post.destroy({ 
+                where: { id: req.params.postId } 
             })
+            .then(() => res.status(200).json({ message: 'Votre message a été supprimé' }))
+            .catch(() => res.status(500).json({ error }));
+            // const filename = post.imagePost.split('/images/')[1];
+            
+            // fs.unlink(`images/${filename}`, () => {
+            //     db.Post.destroy({ 
+            //         where: { id: req.params.postId } 
+            //     })
+            //     .then(() => res.status(200).json({ message: 'Votre message a été supprimé' }))
+            //     .catch(() => res.status(500).json({ error }));
+            // })
         } else {
             return res.status(404).json({ error: 'Message non trouvé'})
         }

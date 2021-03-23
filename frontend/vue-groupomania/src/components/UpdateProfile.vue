@@ -38,7 +38,8 @@
                     this.$router.push('/');
                 })
                 .catch(error => {
-                    alert(JSON.stringify(error.response.data))
+                    const msgerror = error.response.data
+                    alert(msgerror.error)
                 })
             }
         }

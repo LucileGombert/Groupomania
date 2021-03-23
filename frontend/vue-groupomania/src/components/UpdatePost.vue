@@ -1,40 +1,50 @@
-<template> 
-    <div class="modaleBloc" v-if="revele">
+<template>
+    <div v-if="revele" class="modaleBloc">
         <div class="modaleBloc__overlay" v-on:click="displayModale"></div>
-        <!-- <button class="profile__button" @click="$router.push('http://localhost:8080/')">Supprimer mon compte</button> -->
+
         <div class="modaleBloc__card">
             <div class="modaleBloc__card__title">
-                <h2>Etes-vous sûr de vouloir supprimer votre compte ?</h2>
-                <p>(Cette action est irréversible)</p>
+                <h2>Modifier ma publication</h2>
+        
                 <div class="modaleBloc__card__title__close">
                     <i class="far fa-times-circle fa-2x modaleBloc__card__title__close" v-on:click="displayModale"></i>
                 </div>
             </div>
-            <button class="modaleBloc__card__button" @click="deleteAccount">Oui, je supprime mon compte</button>
+
+            <div class="modaleBloc__card__content">
+                <i class="fas fa-user-circle fa-3x modaleBloc__card__content__photo"></i>
+                <textarea v-model="contentmodifyPost" class="modaleBloc__card__content__textarea"/>
+                <!-- <img v-if="post.imagePost" src="../../public/icon.png" class="displayPost__item__publication__image" alt=""/> -->
+            </div>
+
+            <button @click="updatePost" class="modaleBloc__card__button">Enregister les modifications</button>
         </div>
     </div>
+    
 </template>
-
 
 <script>
     import axios from 'axios'
 
     export default {
-        name: 'Modale',
+        name: 'UpdatePost',
         props: ['revele', 'displayModale'],
         methods: {
-            deleteAccount(){
-                const id = localStorage.getItem('userId');
-                axios.delete('http://localhost:3000/api/user/' + id, {
+            modifyPost(id) {
+                console.log('id:', id)
+                const postId = id;
+                axios.put('http://localhost:3000/api/post/' + postId, {
+                    content: this.contentmodifyPost,
+                    // content: this.content,
+                },{
                     headers: {
                         'Content-Type' : 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('token')
                     }
                 })
                 .then(() => {
-                    console.log("Profil supprimé");
-                    localStorage.clear();
-                    this.$router.push('/');
+                    alert("Votre message a bien été modifié !");
+                    window.location.reload()
                 })
                 .catch(error => {
                     const msgerror = error.response.data
@@ -44,7 +54,6 @@
         }
     }
 </script>
-
 
 <style scoped lang="scss">
     .modaleBloc {
@@ -57,7 +66,7 @@
         justify-content: center;
         align-items: center;
         &__overlay {
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.3);
             position: fixed;
             top: 0;
             bottom: 0;
@@ -76,9 +85,7 @@
                 padding: 3rem 6rem 1.5rem 6rem;
                 & h2 {
                     margin-top: 0px;
-                    @media (max-width: 500px) {
-                        font-size: 20px;
-                    }
+                    
                 }
                 &__close {
                     position: absolute;
@@ -90,14 +97,23 @@
                     }
                 }
             }
+            &__content {
+                display: flex;
+                justify-content: center;
+                margin: 2rem 0;
+                &__textarea {
+                    width: 70%;
+                    margin-left: 1rem;
+                }
+            }
             &__button {
                 border: 3px solid #3f3d56;
                 border-radius: 25px;
                 color: #3f3d56;
                 font-size: 15px;
                 font-weight: bold;
-                padding: 0.9rem;
-                margin: 1rem 0 2rem 0;
+                padding: 0.5rem;
+                margin: 2rem 0 2rem 0;
                 outline-style: none;
                 &:hover {
                     border: 3px solid #ff6363;

@@ -16,16 +16,11 @@
           <div class="profile__info__text">{{ user.email }}</div>
         </div>
         <div class="profile__modify">
-          <form method="post" enctype="multipart/form-data">
-            <label for="file">
-              <!-- <i @click="uploadFile" class="far fa-edit fa-2x profile__iconButton"></i> -->
-              <input type="file" @change="fileUpload" ref="file" accept="image/*" name="file" id="file">
+            <label for="file-input">
+              <i @click="uploadFile" class="far fa-edit fa-2x profile__iconButton"></i>
             </label>
-            <!-- <input type="file" @change="onFileSelected" ref="fileUpload" accept="image/*" name="file" id="file"> -->
-            <!-- <button @click="modifyProfile" class="profile__smallButton">Enregister</button> -->
-            <button @click="submitFile" class="profile__smallButton">Enregister</button>
-          </form>
-          
+            <input type="file" @change="onFileSelected"  accept="image/*" id="file-input">
+            <button @click="modifyProfile" class="profile__smallButton">Enregister</button>
         </div>
         <!-- <UpdateProfile v-bind:revele="revele" v-bind:displayModale='displayModale'/> -->
         <!-- <button class="profile__smallButton" @click="modifyProfile"><i class="far fa-edit"></i></button>  -->
@@ -49,10 +44,8 @@ export default {
     return {
       revele: false,
       user: "",
-      selectedFile: null,
+      imageProfile: null,
       url: null,
-      imageProfile: '',
-      file: ''
     }
   },
   components: {
@@ -62,56 +55,35 @@ export default {
     ProfileImage,
   },
   methods: {
-    fileUpload() {
-      this.file = this.$refs.file.files[0];
-    },
-    submitFile() {
-      let formData = new FormData();
-      formData.append('file', this.file);
-
-      const userId = localStorage.getItem('userId');
-      axios.put('http://localhost:3000/api/user/' + userId, formData, {
-          headers: {
-              'Content-Type': 'multipart/form-data',
-              'Authorization': 'Bearer ' + localStorage.getItem('token')
-          }
-      })
-      .then(() => {
-          alert("Votre profil a bien été modifié !");
-      })
-      .catch(error => {
-          alert(JSON.stringify(error.response.data))
-      })
-    },
-
-
-
-    displayModale() {
-      this.revele = !this.revele
-    },
     uploadFile () {
       this.$refs.fileUpload.click()
     },
     onFileSelected(event) {
-      this.url = URL.createObjectURL(event.target.files[0])
-      this.selectedFile = event.target.files[0]
+      this.imageProfile = event.target.files[0]
     },
     modifyProfile() {
+      var formData = new FormData();
+      formData.append("image", this.imageProfile);
+
       const userId = localStorage.getItem('userId');
-      axios.put('http://localhost:3000/api/user/' + userId, {
-          imageProfile: this.imageProfile,
-      },{
-          headers: {
-              'Content-Type' : 'application/json',
-              'Authorization': 'Bearer ' + localStorage.getItem('token')
+      // console.log(this.imageProfile);
+      axios.put('http://localhost:3000/api/user/' + userId, formData, {
+            headers: {
+              'Authorization': 'Bearer ' + localStorage.getItem('token'),
+              'Content-Type': 'multipart/form-data'
           }
       })
       .then(() => {
-          alert("Votre profil a bien été modifié !");
+        // alert("Votre profil a bien été modifié !");
       })
       .catch(error => {
-          alert(JSON.stringify(error.response.data))
+        // const msgerror = error.response.data
+        // alert(msgerror.error)
+        console.log(error);
       })
+    },
+    displayModale() {
+      this.revele = !this.revele
     },
   },
   async created() {
@@ -123,7 +95,7 @@ export default {
       }
     });
     this.user = response.data;
-    console.log('user', response.data.imageProfile);
+    console.log('image profil', response.data.imageProfile);
   }
 }
 </script>

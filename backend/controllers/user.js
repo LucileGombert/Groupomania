@@ -121,6 +121,9 @@ exports.getUserProfile = (req, res, next) => {
 // Permet à un utilisateur de modifier son profil
 exports.modifyUserProfile = (req, res, next) => {
     const id = req.params.id;
+    req.body.user = 2
+    
+    console.log(req.body);
     const userObject = req.file ?
     {
     ...JSON.parse(req.body.user),
