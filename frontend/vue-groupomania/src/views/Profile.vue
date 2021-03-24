@@ -7,14 +7,14 @@
         <h2>Vos informations</h2>
 
         <ProfileImage :src="url || user.imageProfile" class="profile__image"/>
-        <!-- <img :src="url || user.imageProfile || 'user-circle-solid.svg'" class="image" alt="Photo de profil"/> -->
-        
+                
         <div class="profile__info">
           <p class="profile__info__title">Pseudo</p>
           <div class="profile__info__text">{{ user.username }}</div>
           <p class="profile__info__title">Email</p>
           <div class="profile__info__text">{{ user.email }}</div>
         </div>
+        
         <div class="profile__modify">
             <label for="file-input">
               <i @click="uploadFile" class="far fa-edit fa-2x profile__iconButton"></i>
@@ -74,7 +74,8 @@ export default {
           }
       })
       .then(() => {
-        // alert("Votre profil a bien été modifié !");
+        alert("Votre profil a bien été modifié !");
+        window.location.reload()
       })
       .catch(error => {
         // const msgerror = error.response.data
@@ -95,6 +96,7 @@ export default {
       }
     });
     this.user = response.data;
+    localStorage.setItem('imageProfile', response.data.imageProfile);
     console.log('image profil', response.data.imageProfile);
   }
 }

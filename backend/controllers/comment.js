@@ -36,12 +36,13 @@ exports.getAllComments = (req, res, next) => {
         where: { postId: req.params.postId },
         include: [{
             model: db.User,
-            attributes: [ 'username' ]
+            attributes: [ 'username', 'imageProfile' ]
         }]
     })
     .then(commentFound => {
         if(commentFound) {
             res.status(200).json(commentFound);
+            console.log(commentFound);
         } else {
             res.status(404).json({ error: "Aucun commentaire trouvé" });
         }

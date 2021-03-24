@@ -22,7 +22,7 @@ router.put('/:postId', auth, multer, postCtrl.modifyPost);
 router.delete('/:postId', auth, postCtrl.deletePost);
 
 router.post('/:postId/like', auth, likeCtrl.likePost);
-
+router.get('/:postId/like', auth, likeCtrl.getAllLike);
 
 // Permet d'exporter le router
 module.exports = router;

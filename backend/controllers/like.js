@@ -4,35 +4,6 @@ const db = require('../models/index');
 
 
 // Permet d'aimer un message
-// exports.likePost = (req, res, next) => {
-//     const token = req.headers.authorization.split(' ')[1];
-//     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_TOKEN);
-//     const userId = decodedToken.userId;
-//     console.log(req.body.like);
-//     if(req.body.like == "false") {
-//         console.log("J'aime");
-        
-//         db.Like.create({
-//             userId: userId,
-//             postId: req.params.postId
-//         })
-//         .then(() => res.status(200).json({message: 'Vous aimez ce message !'}))
-//         .catch(error => res.status(400).json({ error }));
-        
-//     } else if(req.body.like == true) {
-//         console.log("J'aime plus");
-//         db.Like.destroy({
-//             where: { 
-//                 userId: userId,
-//                 postId: req.params.postId
-//             }
-//         })
-//         .then(() => res.status(200).json({message: 'Vous n\'aimez plus ce message'}))
-//         .catch(error => res.status(400).json({ error }));
-//     }
-// }
-
-
 exports.likePost = (req, res, next) => {
     const token = req.headers.authorization.split(' ')[1];
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_TOKEN);
@@ -47,25 +18,15 @@ exports.likePost = (req, res, next) => {
 
     .then(postfound => {
         if(!postfound) {
-            console.log('pas trouvé');
             return res.status(404).json({ error: 'Le message n\'a pas été trouvé' })
         } else if (isliked == false) {
-            console.log('trouvé mais pas encore liké');
-
-            // db.Like.create({
-            //     userId: userId,
-            //     postId: req.params.postId
-            // })
-            // .then(() => res.status(200).json({message: 'Vous aimez ce message !'}))
-            // .catch(error => res.status(400).json({ error }));
-                
             db.Like.create({ 
                 postId: req.params.postId, 
                 userId: userId 
             })
-            
             .then(response => {
                 console.log(postfound.likes);
+                
                 db.Post.update({ 
                     likes: postfound.likes +1
                 },{
@@ -76,16 +37,6 @@ exports.likePost = (req, res, next) => {
             })
             .catch(error => res.status(400).json({ error }))
         } else if(isliked == true) {
-            console.log('trouvé mais déjà liké');
-
-            // db.Like.create({
-            //     userId: userId,
-            //     postId: req.params.postId
-            // })
-            // .then(() => res.status(200).json({message: 'Vous n\'aimez plus ce message'}))
-            // .catch(error => res.status(400).json({ error }));
-
-
             db.Like.destroy({ 
                 where: { 
                     postId: req.params.postId, 
@@ -107,4 +58,23 @@ exports.likePost = (req, res, next) => {
         }
     })
     .catch(error => res.status(400).json({ error }))  
+}
+
+exports.getAllLike = (req, res, next) => {
+    db.Like.findAll({
+        where: { postId: req.params.postId},
+        include: {
+            model: db.User,
+            attributes: ["username"]
+        },
+    })
+    .then(likePostFound => {
+        if(likePostFound) {
+            res.status(200).json(likePostFound);
+            console.log(likePostFound);
+        } else {
+            res.status(404).json({ error: "Aucun like trouvé" });
+        }
+    })
+    .catch(error => res.status(500).json({ error }))
 }

@@ -14,10 +14,11 @@
             <div class="modaleBloc__card__content">
                 <i class="fas fa-user-circle fa-3x modaleBloc__card__content__photo"></i>
                 <textarea v-model="contentmodifyPost" class="modaleBloc__card__content__textarea"/>
+                <!-- <img v-if="post.imagePost" :src="url || post.imagePost" class="displayPost__item__publication__image" alt=""/> -->
                 <!-- <img v-if="post.imagePost" src="../../public/icon.png" class="displayPost__item__publication__image" alt=""/> -->
             </div>
 
-            <button @click="updatePost" class="modaleBloc__card__button">Enregister les modifications</button>
+            <button @click="modifyPost(post.id)" class="modaleBloc__card__button">Enregister les modifications</button>
         </div>
     </div>
     

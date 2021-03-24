@@ -15,7 +15,9 @@
 
 <style lang="scss">
   .image {
-    width: 4rem;
+    object-fit: cover;
+    width: 3rem;
+    height: 3rem;
     border-radius: 100%;
   }
 </style>

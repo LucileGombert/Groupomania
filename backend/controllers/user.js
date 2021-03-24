@@ -84,6 +84,7 @@ exports.login = (req, res, next) => {
                     userId: user.id,
                     isAdmin: user.isAdmin,
                     username: user.username,
+                    imageProfile: user.imageProfile,
                     token: jwt.sign(
                         {userId: user.id},
                         process.env.JWT_SECRET_TOKEN,
@@ -121,9 +122,10 @@ exports.getUserProfile = (req, res, next) => {
 // Permet à un utilisateur de modifier son profil
 exports.modifyUserProfile = (req, res, next) => {
     const id = req.params.id;
+    console.log(id);
     req.body.user = 2
     
-    console.log(req.body);
+    console.log('bodyUser', req.body.user);
     const userObject = req.file ?
     {
     ...JSON.parse(req.body.user),

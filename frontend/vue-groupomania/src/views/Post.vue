@@ -4,8 +4,8 @@
     
         <div class="newPost">
             <div class="newPost__photo">
-                <ProfileImage :src="url" class="newPost__photo__img"/>
-                <!-- <ProfileImage :src="url || user.imageProfile"/> -->
+                <ProfileImage v-if="imageProfile == 'null'" :src="'user-circle-solid.svg'" class="newPost__photo"/>
+                <ProfileImage v-else :src="imageProfile" class="newPost__photo"/>
             </div>
             <form @submit.prevent="createPost">
                 <div class="newPost__content">
@@ -14,11 +14,12 @@
                 <div class="newPost__option">
                     <div class="newPost__option__file">
                         <label for="file-input">
-                            <button class="newPost__option__file__btn" aria-label="Ajouter une image"><i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button"></i></button>
+                            <!-- <button class="newPost__option__file__btn" aria-label="Ajouter une image"><i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button"></i></button> -->
+                            <i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button"></i>
                         </label>
                         <input type="file" @change="onFileSelected" accept="image/*" id="file-input">
                     </div>
-                    <button class="newPost__option__button">Publier</button>
+                    <button class="newPost__option__button">Publier <i class="far fa-paper-plane"></i></button>
                 </div>
             </form>
         </div>
@@ -27,7 +28,8 @@
             <div class="displayPost__item">
                 <div class="displayPost__item__information">
                     <div class="displayPost__item__information__user">
-                        <i class="fas fa-user-circle fa-3x displayPost__item__information__user__photo"></i>
+                        <ProfileImage :src="post.User.imageProfile" class="displayPost__item__information__user__photo"/>
+                        <!-- <i class="fas fa-user-circle fa-3x displayPost__item__information__user__photo"></i> -->
                         <h2 class="displayPost__item__information__user__name">{{ post.User.username }}</h2>
                     </div>
                     <div>
@@ -53,10 +55,9 @@
 
                     <div>
                         <i @click="displayComment(post.id)" v-on:click="diplayCreateComment(post.id)" class="displayPost__item__option__button far fa-comment-dots" aria-label="Commenter le message"></i>
-                        <span v-if="comments.length > 0" class="displayPost__item__option__count">{{ comments.length }}</span>
-                        <!-- <div v-bind:displayCountComment="displayCountComment(post.id)" :countId="post.id" class="displayPost__item__option__count">{{ comments.length }}</div> -->
-                        
+                        <span v-if="post.Comments.length > 0" class="displayPost__item__option__count">{{ post.Comments.length }}</span>
                     </div>
+
                     <i v-if="userId == post.UserId || isAdmin == 'true'" @click="displayModale" class="displayPost__item__option__button far fa-edit" aria-label="Modifier le message"></i>
                     <i v-if="userId == post.UserId || isAdmin == 'true'" v-on:click="deletePost(post.id)" class="displayPost__item__option__button far fa-trash-alt" aria-label="Supprimer le message"></i>
                 </div>
@@ -67,7 +68,8 @@
                     <div v-bind:showComment="showComment" v-if="showComment && post.id == comment.postId" class="displayComment__item">
                         <div class="displayComment__item__information">
                             <div class="displayComment__item__information__user">
-                                <i class="fas fa-user-circle fa-2x displayComment__item__information__user__photo"></i>
+                                <!-- <i class="fas fa-user-circle fa-2x displayComment__item__information__user__photo"></i> -->
+                                <ProfileImage :src="comment.User.imageProfile" class="displayPost__item__information__user__photo"/>
                                 <h2 class="displayComment__item__information__user__name"> {{ comment.User.username }}</h2>
                             </div>
                             <div>
@@ -114,11 +116,13 @@ export default {
         ProfileImage,
         UpdatePost
     },
+    props: ['post'],
     data() {
         return {
             userId: localStorage.getItem('userId'),
             username: localStorage.getItem('username'),
             isAdmin: localStorage.getItem('isAdmin'),
+            imageProfile: localStorage.getItem('imageProfile'),
             posts: [],
             imagePost: '',
             content: '',
@@ -126,6 +130,7 @@ export default {
             comments: [],
             contentComment: '',
             like: false,
+            likesPost: [],
             revele: false,
             showComment: false,
             showCreateComment: false,
@@ -136,27 +141,6 @@ export default {
         this.displayPost();
     },
     methods: {
-        displayModale() {
-            this.revele = !this.revele
-        },
-        displayCountComment(id) {
-            const postId = id;
-            console.log('postId', postId);
-        
-
-            // let count = document.querySelector('div[countId="'+id+'"]')
-            // console.log(count);
-            // let countId = count.getAttribute('countId');
-            
-            // if(postId == countId) {
-            //     count.style.display = "block";
-                
-                
-            // } else if(postId == countId) {
-            //     count.style.display = "none";
-                
-            // }
-        },
         uploadFile () {
             this.$refs.fileUpload.click()
         },
@@ -164,12 +148,16 @@ export default {
             this.imagePost = event.target.files[0]
         },
         createPost() {
-            axios.post('http://localhost:3000/api/post', {
-                content: this.content,
-                imagePost: this.imagePost.name
-            },{
+            var formData = new FormData();
+            formData.append("content", this.content);
+            formData.append("image", this.imagePost);
+
+            console.log('image', this.imagePost);
+
+            axios.post('http://localhost:3000/api/post', formData, {
                 headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                    'Content-Type': 'multipart/form-data'
                 }
             })
             .then(() => {
@@ -190,6 +178,7 @@ export default {
             })
             .then(response => {
                 this.posts = response.data;
+                console.log('post', response.data);
             })
             .catch(error => {
                 const msgerror = error.response.data
@@ -200,6 +189,9 @@ export default {
             if (date) {
                 return moment(String(date)).format('DD/MM/YYYY')
             }
+        },
+        displayModale() {
+            this.revele = !this.revele
         },
         // displayModifyPost(id) {
         //     const postId = id;
@@ -253,55 +245,80 @@ export default {
                 window.location.reload()
             })
             .catch(error => {
-                const msgerror = error.response.data
+                const msgerror = JSON.stringify(error.response.data)
                 alert(msgerror.error)
             })
         },
         likePost(id) {
-            if(this.like == false) {
-                const postId = id;
-                axios.post('http://localhost:3000/api/post/' + postId + '/like', {
-                    like: this.like,
-                },{
+            const postId = id;
+            const userId = localStorage.getItem('userId');
+            axios.get('http://localhost:3000/api/post/' + postId + '/like', {
                     headers: {
                         'Content-Type' : 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('token')
                     }
                 })
-                .then(() => {
-                    this.like = !this.like
+                .then(response => {
+                    this.likesPost = response.data;
                     console.log('thislike', this.like)
-                    alert("Vous aimez ce message !");
-                    // window.location.reload()
-                    
-                    
+                    console.log('likesPost', this.likesPost)
+                    console.log('userId', userId);
+                    console.log('tableau', this.likesPost.length);
+                    if(this.likesPost.length == 0) {
+                        this.like = false   
+                        console.log('pas déjà liké', this.like);
+                        axios.post('http://localhost:3000/api/post/' + postId + '/like', {
+                            like: this.like,
+                        },{
+                            headers: {
+                                'Content-Type' : 'application/json',
+                                'Authorization': 'Bearer ' + localStorage.getItem('token')
+                            }
+                        })
+                        .then(() => {
+                            console.log('thislike', this.like)
+                            alert("Vous aimez ce message !");
+                            window.location.reload()
+                        })
+                        .catch(error => {
+                            const msgerror = error.response.data
+                            alert(msgerror.error)
+                            alert(JSON.stringify(error.response.data))
+                        })
+                    } else {
+                        for(let i=0; i < this.likesPost.length; i++) {
+                            if(userId == this.likesPost[i].UserId) {
+                                this.like = true   
+                                console.log('déjà liké', this.like);
+                                axios.post('http://localhost:3000/api/post/' + postId + '/like', {
+                                    like: this.like,
+                                },{
+                                    headers: {
+                                        'Content-Type' : 'application/json',
+                                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                                    }
+                                })
+                                .then(() => {
+                                    console.log('thislike', this.like)
+                                    alert("Vous n'aimez plus ce message");
+                                    window.location.reload()
+                                })
+                                .catch(error => {
+                                    const msgerror = error.response.data
+                                    alert(msgerror.error)
+                                    alert(JSON.stringify(error.response.data))
+                                })
+                            }
+                        }
+                    }
                 })
                 .catch(error => {
                     const msgerror = error.response.data
                     alert(msgerror.error)
                     alert(JSON.stringify(error.response.data))
                 })
-            } 
-            if(this.like == true) {
-                const postId = id;
-                axios.post('http://localhost:3000/api/post/' + postId + '/like', {
-                    like: this.like,
-                },{
-                    headers: {
-                        'Content-Type' : 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
-                    }
-                })
-                .then(() => {
-                    this.like = !this.like
-                    console.log('thislike', this.like)
-                    alert("Vous n'aimez plus ce message");
-                    // window.location.reload()
-                })
-            }
         },
-
-
+        
         
         displayComment(id) {
             this.showComment = !this.showComment
@@ -314,8 +331,9 @@ export default {
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
             })
-            .then(reponse => {
-                this.comments = reponse.data;
+            .then(response => {
+                this.comments = response.data;
+                console.log('commentaire', response.data);
             })
             .catch(error => {
                 const msgerror = error.response.data
@@ -520,6 +538,7 @@ export default {
             margin: 0.5rem 2rem;
             &__text {
                 text-align: left;
+                margin: 0 15.25px;
                 &__modifyText {
                     display: flex;
                     align-items: center;
@@ -541,6 +560,7 @@ export default {
             }
             &__image {
                 width: 500px;
+                margin: 1rem auto;
             }
         }
         &__option {

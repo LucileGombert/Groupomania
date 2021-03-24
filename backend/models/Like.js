@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'userId' 
       });
       models.Like.belongsTo(models.Post, {
-         foreignKey: 'postId' 
+        foreignKey: 'postId'
       })
     }
   };
@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       references: {
         model: 'Post',
         key: 'id'
-      }
+      },
     },
     userId: {
       type: DataTypes.INTEGER,
