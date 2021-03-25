@@ -33,9 +33,9 @@ exports.likePost = (req, res, next) => {
                     where: { id: req.params.postId }
                 })
                 .then(() => res.status(201).json({ message: 'Vous aimez ce message !' }))
-                .catch(error => res.status(500).json({ error })) 
+                .catch(error => res.status(500).json({ error: '⚠ Oops, une erreur s\'est produite !' })) 
             })
-            .catch(error => res.status(400).json({ error }))
+            .catch(error => res.status(400).json({ error: '⚠ Oops, une erreur s\'est produite !' }))
         } else if(isliked == true) {
             db.Like.destroy({ 
                 where: { 
@@ -50,14 +50,14 @@ exports.likePost = (req, res, next) => {
                     where: { id: req.params.postId }
                 })
                 .then(() => res.status(201).json({ message: 'Vous n\'aimez plus ce message' }))
-                .catch(error => res.status(500).json({ error })) 
+                .catch(error => res.status(500).json({ error: '⚠ Oops, une erreur s\'est produite !' })) 
             })
-            .catch(error => res.status(400).json({ error }))
+            .catch(error => res.status(400).json({ error: '⚠ Oops, une erreur s\'est produite !' }))
         } else {
             console.log('ko');
         }
     })
-    .catch(error => res.status(400).json({ error }))  
+    .catch(error => res.status(400).json({ error: '⚠ Oops, une erreur s\'est produite !' }))  
 }
 
 exports.getAllLike = (req, res, next) => {
@@ -73,8 +73,8 @@ exports.getAllLike = (req, res, next) => {
             res.status(200).json(likePostFound);
             console.log(likePostFound);
         } else {
-            res.status(404).json({ error: "Aucun like trouvé" });
+            res.status(404).json({ error: 'Aucun like trouvé' });
         }
     })
-    .catch(error => res.status(500).json({ error }))
+    .catch(error => res.status(500).json({ error: '⚠ Oops, une erreur s\'est produite !' }))
 }

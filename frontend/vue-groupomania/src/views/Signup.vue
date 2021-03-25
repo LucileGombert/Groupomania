@@ -25,8 +25,12 @@
                     </div>
 
                     <button class="home__display__signup__form__button">Inscription</button>
+
+                    <p>Vous avez déjà un compte ? <br><router-link to="/" class="home__display__signup__form__login">Se connecter</router-link></p>
                 </form>
+                
             </div>
+            
         </div>
     </div>
 </template>
@@ -138,6 +142,11 @@
                             color: #ff6363;
                             cursor: pointer;
                         }
+                    }
+                    &__login {
+                        font-weight: bold;
+                        text-decoration: none;
+                        color: #ff6363;
                     }
                 }
             }

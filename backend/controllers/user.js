@@ -18,23 +18,23 @@ exports.signup = (req, res, next) => {
     var password = req.body.password;
 
     // Permet de vérifier que tous les champs sont complétés
-    if (email == null || email == '' || username == null || username == ''|| password == null || password == '') {
+    if(email == null || email == '' || username == null || username == ''|| password == null || password == '') {
         return res.status(400).json({ error: 'Tous les champs doivent être renseignés' });
     } 
 
     // Permet de contrôler la longueur du pseudo
-    if (username.length <= 4 || username.length >= 15) {
+    if(username.length <= 4 || username.length >= 15) {
         return res.status(400).json({ error: 'Le pseudo doit contenir 5 à 15 caractères' });
     }
 
     // Permet de contrôler la validité de l'adresse mail
-    if (!emailRegex.test(email)) {
-    return res.status(400).json({ error: 'Adresse mail invalide' });
+    if(!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'Adresse mail invalide' });
     }
 
     // Permet de contrôler la validité du mot de passe
-    if (!passwordRegex.test(password)) {
-    return res.status(400).json({ error: 'Le mot de passe doit contenir entre 8 et 20 caractères dont au moins une lettre majuscule, une lettre minusucle, un chiffre et un symbole' });
+    if(!passwordRegex.test(password)) {
+        return res.status(400).json({ error: 'Le mot de passe doit contenir entre 8 et 20 caractères dont au moins une lettre majuscule, une lettre minusucle, un chiffre et un symbole' });
     }
 
     // Permet de vérifier que l'utilisateur que l'on souhaite créer n'existe pas déjà
@@ -57,14 +57,14 @@ exports.signup = (req, res, next) => {
                 });
                 user.save()
                     .then(() => res.status(201).json({ message: 'Votre compte a bien été créé !' }))
-                    .catch(error => res.status(400).json({ error }));
+                    .catch(error => res.status(400).json({ error: '⚠ Oops, une erreur s\'est produite !' }));
             })
-            .catch(error => res.status(500).json({ error: "Une erreur s'est produite lors de la création de votre compte" }));
+            .catch(error => res.status(500).json({ error: 'Une erreur s\'est produite lors de la création de votre compte' }));
         } else {
-            return res.status(404).json({ error: 'Cet utilisateur existe déjà'})
+            return res.status(404).json({ error: 'Cet utilisateur existe déjà' })
         }
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(500).json({ error: '⚠ Oops, une erreur s\'est produite !' }));
 };
 
 
@@ -92,12 +92,12 @@ exports.login = (req, res, next) => {
                     )
                 });
             })
-            .catch(error => res.status(500).json({ error }));
+            .catch(error => res.status(500).json({ error: '⚠ Oops, une erreur s\'est produite !' }));
         } else {
-            return res.status(404).json({ error: "Cet utilisateur n'existe pas, veuillez créer un compte"})
+            return res.status(404).json({ error: 'Cet utilisateur n\'existe pas, veuillez créer un compte' })
         }
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(500).json({ error: '⚠ Oops, une erreur s\'est produite !' }));
 }
 
 
@@ -112,18 +112,21 @@ exports.getUserProfile = (req, res, next) => {
         if(user) {
             res.status(200).json(user);
         } else {
-            res.status(404).json({ error: 'Utilisateur non trouvé'})
+            res.status(404).json({ error: 'Utilisateur non trouvé' })
         }
     })
-    .catch(error => res.status(404).json({ error }));
+    .catch(error => res.status(404).json({ error: '⚠ Oops, une erreur s\'est produite !' }));
 }
 
 
 // Permet à un utilisateur de modifier son profil
 exports.modifyUserProfile = (req, res, next) => {
-    const id = req.params.id;
-    console.log(id);
-    req.body.user = 2
+    const token = req.headers.authorization.split(' ')[1];
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_TOKEN);
+    const userId = decodedToken.userId;
+
+    req.body.user = userId
+    // req.body.user = 2
     
     console.log('bodyUser', req.body.user);
     const userObject = req.file ?
@@ -133,21 +136,21 @@ exports.modifyUserProfile = (req, res, next) => {
     } : { ...req.body };
     
     db.User.findOne({
-        where: { id: id },
+        where: { id: userId },
     })
     .then(userFound => {
         if(userFound) {
             db.User.update(userObject, {
-                where: { id: id}
+                where: { id: userId}
             })
-            .then(user => res.status(200).json({message: 'Votre profil a bien été modifié !'}))
-            .catch(error => res.status(400).json({ error}))
+            .then(user => res.status(200).json({ message: 'Votre profil a bien été modifié !' }))
+            .catch(error => res.status(400).json({ error: '⚠ Oops, une erreur s\'est produite !' }))
         }
         else {
-            res.status(404).json({ error: "Utilisateur non trouvé" });
+            res.status(404).json({ error: 'Utilisateur non trouvé' });
         }
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(500).json({ error: '⚠ Oops, une erreur s\'est produite !' }));
 }
 
 
@@ -164,12 +167,12 @@ exports.deleteAccount = (req, res, next) => {
                 where: { id: id } 
             })
             .then(() => res.status(200).json({ message: 'Votre compte a été supprimé' }))
-            .catch(() => res.status(500).json({ error }));
+            .catch(() => res.status(500).json({ error: '⚠ Oops, une erreur s\'est produite !' }));
             
         } else {
-            return res.status(404).json({ error: 'Utilisateur non trouvé'})
+            return res.status(404).json({ error: 'Utilisateur non trouvé' })
         }
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(500).json({ error: '⚠ Oops, une erreur s\'est produite !' }));
 }
 

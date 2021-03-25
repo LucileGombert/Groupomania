@@ -1,25 +1,10 @@
 <template>  
     <div id="app">
-        <!-- <div class="nav">
-            <img class="nav__logo" src="../assets/iconLong450.png" alt="Logo de Groupomania">
-                        
-            <i class="fa fa-bars nav__menuButton" id="menuButton"></i>
-
-            <div class="nav__links" id="navLinks">
-                <router-link to="/post" class="nav__links__link">Accueil</router-link> 
-                <router-link to="/profile" class="nav__links__link">Mon profil</router-link>
-                
-                <ModaleLogout v-bind:revele="revele" v-bind:toggleModale='toggleModale'></ModaleLogout>
-                <i v-on:click="toggleModale" class="fas fa-sign-out-alt fa-2x nav__links__logoutLink"></i>
-            </div>
-        </div> -->
-        
         <nav class="navbar navbar-expand-md navbar-light nav">
             <img class="nav__logo" src="../assets/iconLong450.png" alt="Logo de Groupomania">
 
             <button class="navbar-toggler justify-content-center nav__menuButton" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="fa fa-bars"></i>
-                <!-- <span class="navbar-toggler-icon"></span> -->
             </button>
             
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
@@ -37,6 +22,7 @@
                 </ul>
             </div>
         </nav>
+
         <router-view/>
     </div>
 </template>
@@ -68,7 +54,7 @@
         justify-content: space-between;
         align-items: center;
         padding: 0.8rem;
-        border-bottom: 3px dashed #3f3d56;
+        box-shadow: 0px 5px 15px #3f3d56;
         &__logo {
             display: flex;
             justify-content: flex-start;

@@ -6,100 +6,101 @@
       <div class="profile">
         <h2>Vos informations</h2>
 
-        <ProfileImage :src="url || user.imageProfile" class="profile__image"/>
-                
+        <div class="profile__photo">
+          <ProfileImage :src="url || user.imageProfile" class="profile__photo__image"/>
+
+          <div class="profile__photo__modify">
+              <label for="file-input">
+                <i @click="uploadFile" class="far fa-edit profile__photo__modify__iconButton"></i>
+              </label>
+              <input type="file" @change="onFileSelected"  accept="image/*" id="file-input">
+          </div>
+        </div>
+                        
         <div class="profile__info">
           <p class="profile__info__title">Pseudo</p>
           <div class="profile__info__text">{{ user.username }}</div>
           <p class="profile__info__title">Email</p>
           <div class="profile__info__text">{{ user.email }}</div>
         </div>
-        
-        <div class="profile__modify">
-            <label for="file-input">
-              <i @click="uploadFile" class="far fa-edit fa-2x profile__iconButton"></i>
-            </label>
-            <input type="file" @change="onFileSelected"  accept="image/*" id="file-input">
-            <button @click="modifyProfile" class="profile__smallButton">Enregister</button>
-        </div>
-        <!-- <UpdateProfile v-bind:revele="revele" v-bind:displayModale='displayModale'/> -->
-        <!-- <button class="profile__smallButton" @click="modifyProfile"><i class="far fa-edit"></i></button>  -->
+
+        <button @click="modifyProfile" class="profile__smallButton">Enregister</button>
       </div>
       <ModaleDeleteAccount v-bind:revele="revele" v-bind:displayModale='displayModale'/>
-      <button class="profile__bigButton" v-on:click="displayModale">Supprimer mon compte</button>
+      <button class="profile__bigButton" v-on:click="displayModale">Supprimer mon compte <i class="far fa-trash-alt"></i></button>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-import Navbar from '@/components/Navbar.vue'
-import ModaleDeleteAccount from '@/components/ModaleDeleteAccount.vue'
-// import UpdateProfile from '@/components/UpdateProfile.vue'
-import ProfileImage from '../components/ProfileImage'
+  import axios from 'axios'
+  import Navbar from '@/components/Navbar.vue'
+  import ModaleDeleteAccount from '@/components/ModaleDeleteAccount.vue'
 
-export default {
-  name: 'Profile',
-  data(){
-    return {
-      revele: false,
-      user: "",
-      imageProfile: null,
-      url: null,
-    }
-  },
-  components: {
-    Navbar,
-    ModaleDeleteAccount,
-    // UpdateProfile
-    ProfileImage,
-  },
-  methods: {
-    uploadFile () {
-      this.$refs.fileUpload.click()
-    },
-    onFileSelected(event) {
-      this.imageProfile = event.target.files[0]
-    },
-    modifyProfile() {
-      var formData = new FormData();
-      formData.append("image", this.imageProfile);
+  import ProfileImage from '../components/ProfileImage'
 
-      const userId = localStorage.getItem('userId');
-      // console.log(this.imageProfile);
-      axios.put('http://localhost:3000/api/user/' + userId, formData, {
-            headers: {
-              'Authorization': 'Bearer ' + localStorage.getItem('token'),
-              'Content-Type': 'multipart/form-data'
-          }
-      })
-      .then(() => {
-        alert("Votre profil a bien été modifié !");
-        window.location.reload()
-      })
-      .catch(error => {
-        // const msgerror = error.response.data
-        // alert(msgerror.error)
-        console.log(error);
-      })
-    },
-    displayModale() {
-      this.revele = !this.revele
-    },
-  },
-  async created() {
-    const userId = localStorage.getItem('userId');
-
-    const response = await axios.get('http://localhost:3000/api/user/' + userId, {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('token')
+  export default {
+    name: 'Profile',
+    data(){
+      return {
+        revele: false,
+        user: "",
+        imageProfile: null,
+        url: null,
       }
-    });
-    this.user = response.data;
-    localStorage.setItem('imageProfile', response.data.imageProfile);
-    console.log('image profil', response.data.imageProfile);
+    },
+    components: {
+      Navbar,
+      ModaleDeleteAccount,
+      // UpdateProfile
+      ProfileImage,
+    },
+    methods: {
+      uploadFile () {
+        this.$refs.fileUpload.click()
+      },
+      onFileSelected(event) {
+        this.imageProfile = event.target.files[0]
+      },
+      modifyProfile() {
+        var formData = new FormData();
+        formData.append("image", this.imageProfile);
+
+        const userId = localStorage.getItem('userId');
+        // console.log(this.imageProfile);
+        axios.put('http://localhost:3000/api/user/' + userId, formData, {
+              headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+        .then(() => {
+          alert("Votre profil a bien été modifié !");
+          window.location.reload()
+        })
+        .catch(error => {
+          // const msgerror = error.response.data
+          // alert(msgerror.error)
+          console.log(error);
+        })
+      },
+      displayModale() {
+        this.revele = !this.revele
+      },
+    },
+    async created() {
+      const userId = localStorage.getItem('userId');
+
+      const response = await axios.get('http://localhost:3000/api/user/' + userId, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+      });
+      this.user = response.data;
+      localStorage.setItem('imageProfile', response.data.imageProfile);
+      console.log('image profil', response.data.imageProfile);
+    }
   }
-}
 </script>
 
 <style scoped lang="scss">
@@ -118,8 +119,20 @@ export default {
     @media (max-width: 500px) {
       min-width: 80%;
     }
-    &__image {
+    &__photo {
+      display: flex;
+      align-items: center;
       margin-top: 1rem;
+      &__image {
+        margin-right: 1rem;
+      }
+      &__modify>input {
+        display: none; 
+      }
+      &__modify__iconButton:hover {
+        color: white;
+        cursor: pointer;
+      }
     }
     &__info {
       display: flex;
@@ -137,13 +150,6 @@ export default {
         width: 15rem;
       }
     }
-    &__modify>input {
-      display: none; 
-    }
-    &__iconButton:hover {
-        color: white;
-        cursor: pointer;
-    }
     &__smallButton {
       border: 2px solid #3f3d56;
       border-radius: 25px;
@@ -158,7 +164,6 @@ export default {
         color: #ff6363;
         cursor: pointer;
       }
-      
     }
     &__bigButton {
       border: 3px solid #3f3d56;
@@ -175,9 +180,5 @@ export default {
         cursor: pointer;
       }
     }
-  }
-  .image {
-    width: 4rem;
-    border-radius: 100%;
   }
 </style>

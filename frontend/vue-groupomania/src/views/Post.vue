@@ -9,8 +9,13 @@
             </div>
             <form @submit.prevent="createPost">
                 <div class="newPost__content">
-                    <textarea v-model="content" class="newPost__content__text" name="message" id="message" placeholder="Quoi de neuf ?"/>            
+                    <textarea v-model="content" class="newPost__content__text" name="message" id="message" placeholder="Quoi de neuf ?"/>    
+                    <div id="preview" style="display:block">
+                        <img v-if="imagePreview" :src="imagePreview" id="preview" style="display:block" class="newPost__content__image"/>
+                    </div>        
+                    
                 </div>
+
                 <div class="newPost__option">
                     <div class="newPost__option__file">
                         <label for="file-input">
@@ -19,6 +24,7 @@
                         </label>
                         <input type="file" @change="onFileSelected" accept="image/*" id="file-input">
                     </div>
+                    
                     <button class="newPost__option__button">Publier <i class="far fa-paper-plane"></i></button>
                 </div>
             </form>
@@ -38,18 +44,30 @@
                 </div>
 
                 <div class="displayPost__item__publication">
-                    <p class="displayPost__item__publication__text">{{ post.content }} postId: {{ post.id }}</p>
-                    <UpdatePost v-bind:revele="revele" v-bind:displayModale='displayModale'/>
-                    <!-- <div :inputId="post.id" style="display:none" v-bind:showInputModify="showInputModify" class="displayPost__item__publication__text__modifyText">
-                        <textarea v-model="contentmodifyPost" class="displayPost__item__publication__text__modifyText__textarea"/>
-                        <button v-on:click="modifyPost(post.id)" class="displayPost__item__publication__text__modifyText__button"><i class="fas fa-check"></i></button>
-                    </div> -->
-                    <img v-if="post.imagePost" :src="url || post.imagePost" class="displayPost__item__publication__image" alt=""/>
+                    <p :contentPostId="post.id" style="display:block" class="displayPost__item__publication__text">{{ post.content }} postId: {{ post.id }}</p>
+
+                    <div :inputId="post.id" style="display:none" v-bind:showInputModify="showInputModify" class="displayPost__item__publication__text__modifyText">
+                        <textarea v-model="contentmodifyPost" :placeholder="post.content" class="displayPost__item__publication__text__modifyText__textarea"/>
+                        <div class="newPost__option">
+                            <div class="newPost__option__file">
+                                <label for="file-input">
+                                    <!-- <button class="newPost__option__file__btn" aria-label="Ajouter une image"><i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button"></i></button> -->
+                                    <i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button"></i>
+                                </label>
+                                <input type="file" @change="onFileSelected" accept="image/*" id="file-input">
+                            </div>
+                            <button v-on:click="modifyPost(post.id)" class="displayPost__item__publication__text__modifyText__button"><i class="fas fa-check"></i></button>
+                        </div>
+                        <img v-if="imagePreview" :src="imagePreview" class="newPost__content__image"/>
+                    </div>
+                    <img v-if="post.imagePost" :imgPostId="post.id" style="display:block" :src="post.imagePost" class="displayPost__item__publication__image" alt=""/>
                 </div>
 
                 <div class="displayPost__item__option">
                     <div>
-                        <i @click="likePost(post.id)" :class="{'far fa-heart': !like, 'fas fa-heart': like}" class="displayPost__item__option__button"></i>
+                        <!-- <i @click="likePost(post.id)" id="heart" :class="{'far fa-heart': !like, 'fas fa-heart': like}" class="displayPost__item__option__button"></i> -->
+                        <i @click="likePost(post.id)" id="heart" class=" far fa-heart displayPost__item__option__button"></i>
+                        <i @click="likePost(post.id)" style="display:none" id="heartplein" class=" fas fa-heart displayPost__item__option__button"></i>
                         <span v-if="post.likes > 0" class="displayPost__item__option__count">{{ post.likes }}</span>
                     </div>
 
@@ -58,11 +76,12 @@
                         <span v-if="post.Comments.length > 0" class="displayPost__item__option__count">{{ post.Comments.length }}</span>
                     </div>
 
-                    <i v-if="userId == post.UserId || isAdmin == 'true'" @click="displayModale" class="displayPost__item__option__button far fa-edit" aria-label="Modifier le message"></i>
+                    <i v-if="userId == post.UserId || isAdmin == 'true'" @click="displayModifyPost(post.id)" class="displayPost__item__option__button far fa-edit" aria-label="Modifier le message"></i>
+                    <!-- <i v-if="userId == post.UserId || isAdmin == 'true'" @click="displayModale" class="displayPost__item__option__button far fa-edit" aria-label="Modifier le message"></i> -->
                     <i v-if="userId == post.UserId || isAdmin == 'true'" v-on:click="deletePost(post.id)" class="displayPost__item__option__button far fa-trash-alt" aria-label="Supprimer le message"></i>
                 </div>
             </div>
-
+            
             <div>
                 <div class="displayComment" v-for="comment in comments" :key="comment.commentId">
                     <div v-bind:showComment="showComment" v-if="showComment && post.id == comment.postId" class="displayComment__item">
@@ -106,7 +125,6 @@ import axios from 'axios'
 import moment from "moment";
 import Navbar from '@/components/Navbar.vue'
 import ProfileImage from '../components/ProfileImage'
-import UpdatePost from '@/components/UpdatePost.vue'
 
 
 export default {
@@ -114,9 +132,7 @@ export default {
     components: {
         Navbar,
         ProfileImage,
-        UpdatePost
     },
-    props: ['post'],
     data() {
         return {
             userId: localStorage.getItem('userId'),
@@ -124,7 +140,9 @@ export default {
             isAdmin: localStorage.getItem('isAdmin'),
             imageProfile: localStorage.getItem('imageProfile'),
             posts: [],
+            post: '',
             imagePost: '',
+            imagePreview: null,
             content: '',
             contentmodifyPost: '',
             comments: [],
@@ -145,8 +163,9 @@ export default {
             this.$refs.fileUpload.click()
         },
         onFileSelected(event) {
-            this.imagePost = event.target.files[0]
-        },
+            this.imagePost = event.target.files[0];
+            this.imagePreview = URL.createObjectURL(this.imagePost);
+        },      
         createPost() {
             var formData = new FormData();
             formData.append("content", this.content);
@@ -193,44 +212,64 @@ export default {
         displayModale() {
             this.revele = !this.revele
         },
-        // displayModifyPost(id) {
-        //     const postId = id;
+        displayModifyPost(id) {
+            const postId = id;
 
-        //     this.showInputModify == false
+            this.showInputModify == false
 
-        //     let input = document.querySelector('div[inputId="'+id+'"]')
-        //     let inputId = input.getAttribute('inputId');
+            let input = document.querySelector('div[inputId="'+id+'"]')
+            let inputId = input.getAttribute('inputId');
+
+            let contentPost = document.querySelector('p[contentPostId="'+id+'"]')
+            let contentPostId = contentPost.getAttribute('contentPostId');
             
-        //     if(postId == inputId && this.showInputModify == false) {
-        //         input.style.display = "block";
-        //         this.showInputModify = !this.showInputModify
+            let imgPost = document.querySelector('img[imgPostId="'+id+'"]')
+            let imgPostId = imgPost.getAttribute('imgPostId');
+
+            let imgPreviewCreatePost = document.querySelector('#preview')
+
+            console.log('postId', postId);
+            console.log('inputId', inputId);
+            console.log('contentPostId', contentPostId);
+            console.log('imgPostId', imgPostId);
+            console.log('preview', imgPreviewCreatePost);
+
+            if(postId == inputId && postId == contentPostId && this.showInputModify == false) {
+                input.style.display = "block";
+                contentPost.style.display = "none";
+                imgPreviewCreatePost.style.display = "none";
+                this.showInputModify = !this.showInputModify
+                if(postId == imgPostId) {
+                    imgPost.style.display = "none";
+                }
                 
-        //     } else if(postId == inputId && this.showInputModify == true) {
-        //         input.style.display = "none";
-        //         this.showInputModify = !this.showInputModify
-        //     }
-        // },
-        // modifyPost(id) {
-        //     console.log('id:', id)
-        //     const postId = id;
-        //     axios.put('http://localhost:3000/api/post/' + postId, {
-        //         content: this.contentmodifyPost,
-        //         // content: this.content,
-        //     },{
-        //         headers: {
-        //             'Content-Type' : 'application/json',
-        //             'Authorization': 'Bearer ' + localStorage.getItem('token')
-        //         }
-        //     })
-        //     .then(() => {
-        //         alert("Votre message a bien été modifié !");
-        //         window.location.reload()
-        //     })
-        //     .catch(error => {
-        //         const msgerror = error.response.data
-        //         alert(msgerror.error)
-        //     })
-        // },
+            } else if(postId == inputId && this.showInputModify == true) {
+                input.style.display = "none";
+                this.showInputModify = !this.showInputModify
+            }
+        },
+        modifyPost(id) {
+            var formData = new FormData();
+            formData.append("content", this.contentmodifyPost);
+            formData.append("image", this.imagePost);
+
+            const postId = id;
+
+            axios.put('http://localhost:3000/api/post/' + postId, formData, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(() => {
+                alert("Votre message a bien été modifié !");
+                window.location.reload()
+            })
+            .catch(error => {
+                const msgerror = error.response.data
+                alert(msgerror.error)
+            })
+        },
         deletePost(id) {
             const postId = id;
             console.log('postIdDelete', postId)
@@ -276,9 +315,14 @@ export default {
                             }
                         })
                         .then(() => {
-                            console.log('thislike', this.like)
+                            console.log('thislike', this.like);
                             alert("Vous aimez ce message !");
+                            const heart = document.querySelector('#heart');
+                            heart.setAttribute('class', 'active');
+                            console.log('coeur', heart);
+                            heart.style.display = 'block';
                             window.location.reload()
+                            
                         })
                         .catch(error => {
                             const msgerror = error.response.data
@@ -435,6 +479,13 @@ export default {
         width: 90%;
         min-height: 5rem;
     }
+    &__content__image {
+        max-width: 30rem;
+        width: 90%;
+        height: 274px;
+        margin: 1rem auto;
+        object-fit: cover;
+    }
     &__option {
         display: flex;
         justify-content: space-around;
@@ -542,7 +593,10 @@ export default {
                 &__modifyText {
                     display: flex;
                     align-items: center;
-                    
+                    padding: 2rem 0;
+                    margin: 1rem 0;
+                    border-radius: 15px;
+                    box-shadow: 5px 5px 15px grey;                    
                     &__textarea {
                         border-radius: 5px;
                         width: 90%;
@@ -559,8 +613,11 @@ export default {
                 }
             }
             &__image {
-                width: 500px;
+                max-width: 1000px;
+                width: 100%;
+                height: 274px;
                 margin: 1rem auto;
+                object-fit: cover;
             }
         }
         &__option {
