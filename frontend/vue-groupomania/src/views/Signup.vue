@@ -3,34 +3,32 @@
         <img class="home__title" src="../assets/iconLong450.png" alt="Logo de Groupomania">
 
         <div class="home__display">
-            <img class="home__display__picture" src="../assets/bottomImage450.png" alt="Représentation de trois personnes qui discutent via un chat">
-
-            <div class="home__display__signup">
-                <form @submit.prevent="signup" class="home__display__signup__form">
-                    <h1 class="home__display__signup__form__title">S'inscrire</h1>
-
-                    <div class="home__display__signup__form__input">
-                        <label for="username" class="home__display__signup__form__input__label">Pseudo</label>
-                        <input type="text" v-model="username" id="username" name="username">
-                    </div>
-
-                    <div class="home__display__signup__form__input">
-                        <label for="mail" class="home__display__signup__form__input__label">Email</label>
-                        <input type="email" v-model="email" id="mail" name="mail">
-                    </div>
-
-                    <div class="home__display__signup__form__input">
-                        <label for="password" class="home__display__signup__form__input__label">Mot de passe</label>
-                        <input type="password" v-model="password" id="password" name="password">
-                    </div>
-
-                    <button class="home__display__signup__form__button">Inscription</button>
-
-                    <p>Vous avez déjà un compte ? <br><router-link to="/" class="home__display__signup__form__login">Se connecter</router-link></p>
-                </form>
-                
+            <div class="home__display__picture">
+                <img class="home__display__picture" src="../assets/bottomImage450.png" alt="Représentation de trois personnes qui discutent via un chat">
             </div>
-            
+           
+            <form @submit.prevent="signup" class="home__display__form">
+                <h1 class="home__display__form__title">S'inscrire</h1>
+
+                <div class="home__display__form__input">
+                    <label for="username" class="home__display__form__input__label">Pseudo</label>
+                    <input type="text" v-model="username" id="username" name="username">
+                </div>
+
+                <div class="home__display__form__input">
+                    <label for="mail" class="home__display__form__input__label">Email</label>
+                    <input type="email" v-model="email" id="mail" name="mail">
+                </div>
+
+                <div class="home__display__form__input">
+                    <label for="password" class="home__display__form__input__label">Mot de passe</label>
+                    <input type="password" v-model="password" id="password" name="password">
+                </div>
+
+                <button class="home__display__form__button">Inscription</button>
+
+                <p>Vous avez déjà un compte ? <br><router-link to="/" class="home__display__form__login">Se connecter</router-link></p>
+            </form>
         </div>
     </div>
 </template>
@@ -80,6 +78,8 @@
         }
         &__display {
             margin-top: 2rem;
+            display: flex;
+            justify-content: space-around;
             @media (max-width: 930px) {
                 display: flex;
                 flex-direction: column-reverse;
@@ -94,60 +94,57 @@
                 @media (max-width: 930px) {
                     max-width: 250px;
                     margin: auto;
+                    padding-top: 2rem;
                 } 
             }
-            &__signup {
+           
+            &__form {
                 display: flex;
-                justify-content: center;
+                flex-direction: column;
                 align-items: center;
-                &__form {
+                width: 40%;
+                border: 3px solid #3f3d56;
+                border-radius: 25px;
+                margin-top: 2rem;
+                margin-left: -2rem;
+                padding: 1rem;
+                @media (max-width: 930px) {
+                    min-width: 250px;
+                    margin: auto;
+                }
+                &__title {
+                    margin-bottom: 3rem;
+                    font-size: 27px;
+                }
+                &__input {
                     display: flex;
                     flex-direction: column;
-                    align-items: center;
-                    width: 40%;
+                    margin-bottom: 2rem;
+                    width: 70%;
+                    &__label {
+                        text-align: start;
+                        font-weight: bolder;
+                    }
+                }
+                &__button {
                     border: 3px solid #3f3d56;
                     border-radius: 25px;
-                    margin-top: 2rem;
-                    margin-left: -2rem;
-                    padding: 1rem;
-                    @media (max-width: 930px) {
-                        min-width: 200px;
-                        margin: auto;
-                    }
-                    &__title {
-                        margin-bottom: 3rem;
-                        font-size: 27px;
-                    }
-                    &__input {
-                        display: flex;
-                        flex-direction: column;
-                        margin-bottom: 2rem;
-                        width: 70%;
-                        &__label {
-                            text-align: start;
-                            font-weight: bolder;
-                        }
-                    }
-                    &__button {
-                        border: 3px solid #3f3d56;
-                        border-radius: 25px;
-                        color: #3f3d56;
-                        font-size: 15px;
-                        font-weight: bold;
-                        padding: 0.9rem;
-                        margin: 1rem;
-                        outline-style: none;
-                        &:hover {
-                            border: 3px solid #ff6363;
-                            color: #ff6363;
-                            cursor: pointer;
-                        }
-                    }
-                    &__login {
-                        font-weight: bold;
-                        text-decoration: none;
+                    color: #3f3d56;
+                    font-size: 15px;
+                    font-weight: bold;
+                    padding: 0.9rem;
+                    margin: 1rem;
+                    outline-style: none;
+                    &:hover {
+                        border: 3px solid #ff6363;
                         color: #ff6363;
+                        cursor: pointer;
                     }
+                }
+                &__login {
+                    font-weight: bold;
+                    text-decoration: none;
+                    color: #ff6363;
                 }
             }
         }

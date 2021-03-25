@@ -16,8 +16,8 @@
                         <router-link to="/profile" class="nav__links__link">Mon profil</router-link>
                     </li>
                     <li class="nav-item">
-                        <ModaleLogout v-bind:revele="revele" v-bind:toggleModale='toggleModale'></ModaleLogout>
-                        <i v-on:click="toggleModale" class="fas fa-sign-out-alt nav__links__logoutLink"></i>
+                        <ModaleLogout v-bind:revele="revele" v-bind:displayModale='displayModale'></ModaleLogout>
+                        <i @click="displayModale" class="fas fa-sign-out-alt nav__links__logoutLink"></i>
                     </li>
                 </ul>
             </div>
@@ -41,7 +41,7 @@
             ModaleLogout
         },
         methods: {
-            toggleModale: function() {
+            displayModale() {
             this.revele = !this.revele
             }
         }

@@ -1,16 +1,16 @@
 <template> 
-    <div class="modaleBloc" v-if="revele">
-        <div class="modaleBloc__overlay" v-on:click="displayModale"></div>
-        <!-- <button class="profile__button" @click="$router.push('http://localhost:8080/')">Supprimer mon compte</button> -->
+    <div v-if="revele" class="modaleBloc">
+        <div @click="displayModale" class="modaleBloc__overlay"></div>
+        
         <div class="modaleBloc__card">
             <div class="modaleBloc__card__title">
                 <h2>Etes-vous sûr de vouloir supprimer votre compte ?</h2>
                 <p>(Cette action est irréversible)</p>
                 <div class="modaleBloc__card__title__close">
-                    <i class="far fa-times-circle fa-2x modaleBloc__card__title__close" v-on:click="displayModale"></i>
+                    <i @click="displayModale" class="far fa-times-circle fa-2x modaleBloc__card__title__close"></i>
                 </div>
             </div>
-            <button class="modaleBloc__card__button" @click="deleteAccount">Oui, je supprime mon compte</button>
+            <button @click="deleteAccount" class="modaleBloc__card__button">Oui, je supprime mon compte</button>
         </div>
     </div>
 </template>

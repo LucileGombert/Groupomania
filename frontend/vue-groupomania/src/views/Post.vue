@@ -7,9 +7,9 @@
                 <ProfileImage v-if="imageProfile == 'null'" :src="'user-circle-solid.svg'" class="newPost__photo"/>
                 <ProfileImage v-else :src="imageProfile" class="newPost__photo"/>
             </div>
-            <form @submit.prevent="createPost">
+            <form @submit.prevent="createPost" aria-label="Nouveau message">
                 <div class="newPost__content">
-                    <textarea v-model="content" class="newPost__content__text" name="message" id="message" placeholder="Quoi de neuf ?"/>    
+                    <textarea v-model="content" class="newPost__content__text" name="message" id="message" placeholder="Quoi de neuf ?" aria-label="Rédiger le message"/>    
                     <div id="preview" style="display:block">
                         <img v-if="imagePreview" :src="imagePreview" id="preview" style="display:block" class="newPost__content__image"/>
                     </div>        
@@ -19,13 +19,12 @@
                 <div class="newPost__option">
                     <div class="newPost__option__file">
                         <label for="file-input">
-                            <!-- <button class="newPost__option__file__btn" aria-label="Ajouter une image"><i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button"></i></button> -->
-                            <i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button"></i>
+                            <i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button" aria-label="Sélectionner un fichier"></i>
                         </label>
                         <input type="file" @change="onFileSelected" accept="image/*" id="file-input">
                     </div>
                     
-                    <button class="newPost__option__button">Publier <i class="far fa-paper-plane"></i></button>
+                    <button type="submit" class="newPost__option__button" aria-label="Publier le message">Publier <i class="far fa-paper-plane"></i></button>
                 </div>
             </form>
         </div>
@@ -44,19 +43,19 @@
                 </div>
 
                 <div class="displayPost__item__publication">
-                    <p :contentPostId="post.id" style="display:block" class="displayPost__item__publication__text">{{ post.content }} postId: {{ post.id }}</p>
+                    <p :contentPostId="post.id" style="display:block" class="displayPost__item__publication__text">{{ post.content }}</p>
 
                     <div :inputId="post.id" style="display:none" v-bind:showInputModify="showInputModify" class="displayPost__item__publication__text__modifyText">
-                        <textarea v-model="contentmodifyPost" :placeholder="post.content" class="displayPost__item__publication__text__modifyText__textarea"/>
+                        <textarea v-model="contentmodifyPost" :placeholder="post.content" class="displayPost__item__publication__text__modifyText__textarea" aria-label="Modifier le message"/>
                         <div class="newPost__option">
                             <div class="newPost__option__file">
                                 <label for="file-input">
                                     <!-- <button class="newPost__option__file__btn" aria-label="Ajouter une image"><i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button"></i></button> -->
-                                    <i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button"></i>
+                                    <i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button" aria-label="Sélectionner un fichier"></i>
                                 </label>
                                 <input type="file" @change="onFileSelected" accept="image/*" id="file-input">
                             </div>
-                            <button v-on:click="modifyPost(post.id)" class="displayPost__item__publication__text__modifyText__button"><i class="fas fa-check"></i></button>
+                            <button v-on:click="modifyPost(post.id)" class="displayPost__item__publication__text__modifyText__button" aria-label="Enregistrer les modifications"><i class="fas fa-check"></i></button>
                         </div>
                         <img v-if="imagePreview" :src="imagePreview" class="newPost__content__image"/>
                     </div>
@@ -65,9 +64,9 @@
 
                 <div class="displayPost__item__option">
                     <div>
-                        <!-- <i @click="likePost(post.id)" id="heart" :class="{'far fa-heart': !like, 'fas fa-heart': like}" class="displayPost__item__option__button"></i> -->
-                        <i @click="likePost(post.id)" id="heart" class=" far fa-heart displayPost__item__option__button"></i>
-                        <i @click="likePost(post.id)" style="display:none" id="heartplein" class=" fas fa-heart displayPost__item__option__button"></i>
+                        <!-- <i @click="likePost(post.id)" id="heart" :class="{'far fa-heart': !like, 'fas fa-heart': like}" class="displayPost__item__option__button" aria-label="Aimer le message"></i> -->
+                        <i @click="likePost(post.id)" id="heart" class=" far fa-heart displayPost__item__option__button" aria-label="Aimer le message"></i>
+                        <i @click="likePost(post.id)" style="display:none" id="heartplein" class=" fas fa-heart displayPost__item__option__button" aria-label="Aimer le message"></i>
                         <span v-if="post.likes > 0" class="displayPost__item__option__count">{{ post.likes }}</span>
                     </div>
 
@@ -77,7 +76,6 @@
                     </div>
 
                     <i v-if="userId == post.UserId || isAdmin == 'true'" @click="displayModifyPost(post.id)" class="displayPost__item__option__button far fa-edit" aria-label="Modifier le message"></i>
-                    <!-- <i v-if="userId == post.UserId || isAdmin == 'true'" @click="displayModale" class="displayPost__item__option__button far fa-edit" aria-label="Modifier le message"></i> -->
                     <i v-if="userId == post.UserId || isAdmin == 'true'" v-on:click="deletePost(post.id)" class="displayPost__item__option__button far fa-trash-alt" aria-label="Supprimer le message"></i>
                 </div>
             </div>
@@ -87,7 +85,6 @@
                     <div v-bind:showComment="showComment" v-if="showComment && post.id == comment.postId" class="displayComment__item">
                         <div class="displayComment__item__information">
                             <div class="displayComment__item__information__user">
-                                <!-- <i class="fas fa-user-circle fa-2x displayComment__item__information__user__photo"></i> -->
                                 <ProfileImage :src="comment.User.imageProfile" class="displayPost__item__information__user__photo"/>
                                 <h2 class="displayComment__item__information__user__name"> {{ comment.User.username }}</h2>
                             </div>
@@ -96,7 +93,7 @@
                             </div>
                         </div>
                         <div class="displayPost__item__publication">
-                            <p class="displayPost__item__publication__text">{{ comment.content }} post:{{ comment.postId }} comment:{{ comment.id }}</p>
+                            <p class="displayPost__item__publication__text">{{ comment.content }}</p>
                         </div>
                         <div class="displayPost__item__option">
                             <i v-if="userId == comment.UserId || isAdmin == 'true'" @click="deleteComment(comment.id)" class="displayPost__item__option__button far fa-trash-alt"></i>
@@ -106,9 +103,9 @@
 
                 <div :formId="post.id" style="display:none" v-bind:showCreateComment="showCreateComment" class="displayComment__newComment">
                     <form @submit.prevent="createComment(post.id)" class="displayComment__newComment__form">
-                        <textarea v-model="contentComment" class="displayComment__newComment__form__text" name="comment" id="comment" placeholder="Ecrivez votre commentaire ..."/>              
+                        <textarea v-model="contentComment" class="displayComment__newComment__form__text" name="comment" id="comment" placeholder="Ecrivez votre commentaire ..." aria-label="Rédiger un commentaire"/>              
                         <div>
-                            <button class="displayComment__newComment__form__button"><i class="far fa-paper-plane"></i></button>
+                            <button class="displayComment__newComment__form__button" aria-label="Publier le commentaire"><i class="far fa-paper-plane"></i></button>
                         </div>
                     </form>
                 </div>
@@ -223,15 +220,14 @@ export default {
             let contentPost = document.querySelector('p[contentPostId="'+id+'"]')
             let contentPostId = contentPost.getAttribute('contentPostId');
             
-            let imgPost = document.querySelector('img[imgPostId="'+id+'"]')
-            let imgPostId = imgPost.getAttribute('imgPostId');
+            
 
             let imgPreviewCreatePost = document.querySelector('#preview')
 
             console.log('postId', postId);
             console.log('inputId', inputId);
             console.log('contentPostId', contentPostId);
-            console.log('imgPostId', imgPostId);
+            // console.log('imgPostId', imgPostId);
             console.log('preview', imgPreviewCreatePost);
 
             if(postId == inputId && postId == contentPostId && this.showInputModify == false) {
@@ -239,6 +235,9 @@ export default {
                 contentPost.style.display = "none";
                 imgPreviewCreatePost.style.display = "none";
                 this.showInputModify = !this.showInputModify
+
+                let imgPost = document.querySelector('img[imgPostId="'+id+'"]')
+                let imgPostId = imgPost.getAttribute('imgPostId');
                 if(postId == imgPostId) {
                     imgPost.style.display = "none";
                 }
@@ -299,10 +298,13 @@ export default {
                 })
                 .then(response => {
                     this.likesPost = response.data;
-                    console.log('thislike', this.like)
+                    // console.log('thislike', this.like)
                     console.log('likesPost', this.likesPost)
-                    console.log('userId', userId);
-                    console.log('tableau', this.likesPost.length);
+                    // console.log('userId', userId);
+                    // console.log('tableau', this.likesPost.length);
+                    // console.log('likePostUserId', this.likesPost.length);
+                    
+                    
                     if(this.likesPost.length == 0) {
                         this.like = false   
                         console.log('pas déjà liké', this.like);
@@ -317,11 +319,11 @@ export default {
                         .then(() => {
                             console.log('thislike', this.like);
                             alert("Vous aimez ce message !");
-                            const heart = document.querySelector('#heart');
-                            heart.setAttribute('class', 'active');
-                            console.log('coeur', heart);
-                            heart.style.display = 'block';
-                            window.location.reload()
+                            // const heart = document.querySelector('#heart');
+                            // heart.setAttribute('class', 'active');
+                            // console.log('coeur', heart);
+                            // heart.style.color = 'red';
+                            // window.location.reload()
                             
                         })
                         .catch(error => {
@@ -330,6 +332,7 @@ export default {
                             alert(JSON.stringify(error.response.data))
                         })
                     } else {
+                        console.log('allo');
                         for(let i=0; i < this.likesPost.length; i++) {
                             if(userId == this.likesPost[i].UserId) {
                                 this.like = true   
@@ -343,9 +346,9 @@ export default {
                                     }
                                 })
                                 .then(() => {
-                                    console.log('thislike', this.like)
+                                    console.log('thislikedéjà liké', this.like)
                                     alert("Vous n'aimez plus ce message");
-                                    window.location.reload()
+                                    // window.location.reload()
                                 })
                                 .catch(error => {
                                     const msgerror = error.response.data
@@ -353,6 +356,30 @@ export default {
                                     alert(JSON.stringify(error.response.data))
                                 })
                             }
+                            // } else {
+                            //     this.like = false   
+                            //     console.log('pas déjà liké', this.like);
+                            //     console.log('userId', userId);
+                            //     console.log('likePostUserId', this.likesPost[i].UserId);
+                            //     axios.post('http://localhost:3000/api/post/' + postId + '/like', {
+                            //         like: this.like,
+                            //     },{
+                            //         headers: {
+                            //             'Content-Type' : 'application/json',
+                            //             'Authorization': 'Bearer ' + localStorage.getItem('token')
+                            //         }
+                            //     })
+                            //     .then(() => {
+                            //         console.log('thislikepas déjà liké', this.like);
+                            //         alert("Vous aimez ce message !");
+                            //         // window.location.reload()
+                            //     })
+                            //     .catch(error => {
+                            //         const msgerror = error.response.data
+                            //         alert(msgerror.error)
+                            //         alert(JSON.stringify(error.response.data))
+                            //     })
+                            // }
                         }
                     }
                 })
@@ -475,12 +502,12 @@ export default {
         border-radius: 0 15px;
         border: none;
         margin: 1.5rem 0 0 0;
-        max-width: 30rem;
+        max-width: 50rem;
         width: 90%;
         min-height: 5rem;
     }
     &__content__image {
-        max-width: 30rem;
+        max-width: 50rem;
         width: 90%;
         height: 274px;
         margin: 1rem auto;
@@ -494,7 +521,7 @@ export default {
             display: none; 
         }
         &__file {
-            &__btn {
+            &__btnInvisible {
                 border: none;
                 background-color: #ffb1b1;
             }
@@ -613,7 +640,7 @@ export default {
                 }
             }
             &__image {
-                max-width: 1000px;
+                max-width: 1100px;
                 width: 100%;
                 height: 274px;
                 margin: 1rem auto;
@@ -652,6 +679,7 @@ export default {
             align-items: center;
             &__user {
                 display: flex;
+                align-items: center;
                 &__photo {
                 margin: 0 0.5rem 0 0;
                 }
@@ -685,12 +713,14 @@ export default {
         &__form {
             display: flex;
             align-items: center;
+            justify-content: center;
             &__text {
                 border-radius: 15px;
                 border: none;
                 margin: 0.5rem ;
                 padding: 0.5rem;
-                width: 27rem;
+                max-width: 50rem;
+                width: 90%;
                 min-height: 3rem;
             }
             &__button {

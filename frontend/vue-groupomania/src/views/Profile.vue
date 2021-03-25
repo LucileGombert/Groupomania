@@ -7,11 +7,11 @@
         <h2>Vos informations</h2>
 
         <div class="profile__photo">
-          <ProfileImage :src="url || user.imageProfile" class="profile__photo__image"/>
+          <ProfileImage :src="user.imageProfile" class="profile__photo__image"/>
 
           <div class="profile__photo__modify">
-              <label for="file-input">
-                <i @click="uploadFile" class="far fa-edit profile__photo__modify__iconButton"></i>
+              <label for="file-input" aria-label="Sélectionner un fichier">
+                <i @click="uploadFile" class="far fa-edit profile__photo__modify__btnInvisible" aria-label="Modifier la photo de profil"></i>
               </label>
               <input type="file" @change="onFileSelected"  accept="image/*" id="file-input">
           </div>
@@ -24,7 +24,7 @@
           <div class="profile__info__text">{{ user.email }}</div>
         </div>
 
-        <button @click="modifyProfile" class="profile__smallButton">Enregister</button>
+        <button @click="modifyProfile" class="profile__smallButton">Enregister <i class="fas fa-check"></i></button>
       </div>
       <ModaleDeleteAccount v-bind:revele="revele" v-bind:displayModale='displayModale'/>
       <button class="profile__bigButton" v-on:click="displayModale">Supprimer mon compte <i class="far fa-trash-alt"></i></button>
@@ -36,7 +36,6 @@
   import axios from 'axios'
   import Navbar from '@/components/Navbar.vue'
   import ModaleDeleteAccount from '@/components/ModaleDeleteAccount.vue'
-
   import ProfileImage from '../components/ProfileImage'
 
   export default {
@@ -46,14 +45,12 @@
         revele: false,
         user: "",
         imageProfile: null,
-        url: null,
       }
     },
     components: {
       Navbar,
       ModaleDeleteAccount,
-      // UpdateProfile
-      ProfileImage,
+      ProfileImage
     },
     methods: {
       uploadFile () {
@@ -79,9 +76,8 @@
           window.location.reload()
         })
         .catch(error => {
-          // const msgerror = error.response.data
-          // alert(msgerror.error)
-          console.log(error);
+          const msgerror = error.response.data
+          alert(msgerror.error)
         })
       },
       displayModale() {
@@ -129,9 +125,13 @@
       &__modify>input {
         display: none; 
       }
-      &__modify__iconButton:hover {
-        color: white;
-        cursor: pointer;
+      &__modify__btnInvisible {
+        border: none;
+        background-color: #ffb1b1;
+        &:hover {
+          color: white;
+          cursor: pointer;
+        }
       }
     }
     &__info {

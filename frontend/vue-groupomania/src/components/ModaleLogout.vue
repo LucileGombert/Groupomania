@@ -1,16 +1,16 @@
 <template> 
-    <div class="modaleBloc" v-if="revele">
-        <div class="modaleBloc__overlay" v-on:click="toggleModale"></div>
+    <div v-if="revele" class="modaleBloc">
+        <div @click="displayModale" class="modaleBloc__overlay"></div>
         
         <div class="modaleBloc__card">
             <div class="modaleBloc__card__title">
                 <h2>Souhaitez-vous vraiment vous déconnecter ?</h2>
                 
                 <div class="modaleBloc__card__title__close">
-                    <i class="far fa-times-circle fa-2x modaleBloc__card__title__close" v-on:click="toggleModale"></i>
+                    <i @click="displayModale" class="far fa-times-circle fa-2x modaleBloc__card__title__close" aria-label="Fermer la fenêtre"></i>
                 </div>
             </div>
-            <button class="modaleBloc__card__button" @click="handleClick">Oui, je me déconnecte</button>
+            <button @click="logout" class="modaleBloc__card__button" aria-label="Se déconnecter">Oui, je me déconnecte <i class="fas fa-sign-out-alt"></i></button>
         </div>
     </div>
 </template>
@@ -19,9 +19,9 @@
 <script>
     export default {
         name: 'ModaleLogout',
-        props: ['revele', 'toggleModale'],
+        props: ['revele', 'displayModale'],
         methods: {
-            handleClick() {
+            logout() {
                 localStorage.removeItem('token');
                 localStorage.removeItem('userId');
                 localStorage.removeItem('username');
@@ -29,7 +29,7 @@
                 this.$store.dispatch('user', null);
                 this.$router.push('http://localhost:8080/#/');
             }
-        }, 
+        }
     }
 </script>
 
