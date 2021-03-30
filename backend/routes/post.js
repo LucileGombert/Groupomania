@@ -16,7 +16,6 @@ const likeCtrl = require('../controllers/like');
 
 // Routes de l'API pour les messages
 router.post('', auth, multer, postCtrl.createPost);
-router.get('/:postId', auth, postCtrl.getOnePost);
 router.get('', auth, postCtrl.getAllPosts);
 router.put('/:postId', auth, multer, postCtrl.modifyPost);
 router.delete('/:postId', auth, postCtrl.deletePost);

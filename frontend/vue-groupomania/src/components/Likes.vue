@@ -9,7 +9,6 @@
 <script>
     import axios from 'axios'
 
-
     export default {
         name: 'Likes',
         props:['post'],
@@ -22,10 +21,11 @@
             this.displayHeartColor();  
         },
         methods:{
+            // Permet d'aimer un message
             likePost() {
                 const postId = this.post.id;
-                console.log('postId', postId);
                 const userId = this.userId;
+
                 axios.get('http://localhost:3000/api/post/' + postId + '/like', {
                     headers: {
                         'Content-Type' : 'application/json',
@@ -48,17 +48,13 @@
                         })
                         .then(() => {
                             alert("Vous aimez ce message !");
-                            // this.isLiked = true;
-                            // window.location.reload()
+                            window.location.reload()
                             
                         })
                         .catch(error => {
                             const msgerror = error.response.data
                             alert(msgerror.error)
-                            alert(JSON.stringify(error.response.data))
                         })
-
-                        
                     } else {                     
                         if(this.postLikes.find(x => x.userId == userId)) {
                             this.like = true   
@@ -93,13 +89,11 @@
                             })
                             .then(() => {
                                 alert("Vous aimez ce message !");
-                                // this.isLiked = true;
                                 window.location.reload()
                             })
                             .catch(error => {
                                 const msgerror = error.response.data
                                 alert(msgerror.error)
-                                alert(JSON.stringify(error.response.data))
                             })
                         }
                     }
@@ -110,9 +104,10 @@
                     alert(JSON.stringify(error.response.data))
                 })
             },
+
+            // Permet d'afficher un coeur vide ou plein en couleur en fonction de si l'utilisateur aime le message ou non
             displayHeartColor(){
                 const postId = this.post.id;
-                console.log(postId);
                 const userId = localStorage.getItem('userId');
 
                 axios.get('http://localhost:3000/api/post/' + postId + '/like', {
@@ -134,7 +129,6 @@
                 .catch(error => {
                     const msgerror = error.response.data
                     alert(msgerror.error)
-                    alert(JSON.stringify(error.response.data))
                 })
             }
         }
@@ -144,7 +138,6 @@
 
 <style lang="scss">
     .like {
-        
         &__button:hover {
             color: #ff6363;
             cursor: pointer;

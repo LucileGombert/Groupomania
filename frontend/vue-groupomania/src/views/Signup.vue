@@ -27,7 +27,7 @@
 
                 <button class="home__display__form__button">Inscription</button>
 
-                <p>Vous avez déjà un compte ? <br><router-link to="/" class="home__display__form__login">Se connecter</router-link></p>
+                <p>Vous avez déjà un compte ? <router-link to="/" class="home__display__form__login">Se connecter</router-link></p>
             </form>
         </div>
     </div>
@@ -47,14 +47,14 @@
             }
         },
         methods: {
+            // Permet de s'inscrire et de basculer sur la page de connexion 
             signup() {
                 axios.post('http://localhost:3000/api/user/signup', {
                     username: this.username,
                     email: this.email,
                     password: this.password,
                 })
-                .then(response => {
-                    console.log(response);
+                .then(() => {
                     alert('Votre compte a bien été créé ! A présent, veuillez vous connecter.')
                     this.$router.push('/');
                 })
@@ -144,7 +144,8 @@
                 &__login {
                     font-weight: bold;
                     text-decoration: none;
-                    color: #ff6363;
+                    color: #E60A0A;
+                    // color: #ff6363;
                 }
             }
         }

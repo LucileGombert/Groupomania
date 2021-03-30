@@ -41,15 +41,13 @@
             }
         },
         methods: {
+            // Permet de se connecter et de recharger la page sans que l'utilisateur soit déconnecté
             login() {
                 axios.post('http://localhost:3000/api/user/login', {
                     email: this.email,
                     password: this.password,
                 })
                 .then(response => {
-                    console.log(response);
-                    
-                    // Permet de recharger la page sans que l'utilisateur soit déconnecté
                     localStorage.setItem('token', response.data.token);
                     localStorage.setItem('userId', response.data.userId);
                     localStorage.setItem('username', response.data.username);
@@ -97,7 +95,6 @@
                     padding-top: 2rem;
                 } 
             }
-            
             &__form {
                 display: flex;
                 flex-direction: column;
@@ -145,7 +142,8 @@
                 &__signup {
                     font-weight: bold;
                     text-decoration: none;
-                    color: #ff6363;
+                    color: #E60A0A;
+                    // color: #ff6363;
                 }
             }
         }

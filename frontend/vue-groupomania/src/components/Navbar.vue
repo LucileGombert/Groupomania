@@ -12,11 +12,13 @@
                     <li class="nav-item">
                         <router-link to="/post" class="nav__links__link">Accueil</router-link> 
                     </li>
+
                     <li class="nav-item">
                         <router-link to="/profile" class="nav__links__link">Mon profil</router-link>
                     </li>
+
                     <li class="nav-item">
-                        <ModaleLogout v-bind:revele="revele" v-bind:displayModale='displayModale'></ModaleLogout>
+                        <ModaleLogout v-bind:revele="revele" v-bind:displayModale='displayModale'/>
                         <i @click="displayModale" class="fas fa-sign-out-alt nav__links__logoutLink"></i>
                     </li>
                 </ul>
@@ -34,15 +36,16 @@
         name: 'Navbar',
         data(){
             return {
-            revele: false
+                revele: false
             }
         },
         components: {
             ModaleLogout
         },
         methods: {
+            // Permet d'afficher la boîte modale de déconnexion 
             displayModale() {
-            this.revele = !this.revele
+                this.revele = !this.revele
             }
         }
     }
@@ -65,11 +68,11 @@
             color: #ff6363;
         }
         a {
-        font-weight: bold;
-        color: #3f3d56;
-            &.router-link-exact-active {
-            color: #ff6363;
-            }
+            font-weight: bold;
+            color: #3f3d56;
+            // &.router-link-exact-active {
+            // color: #ff6363;
+            // }
             &:hover {
                 color: #ff6363;
             }

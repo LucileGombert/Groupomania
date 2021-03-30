@@ -60,6 +60,7 @@ exports.likePost = (req, res, next) => {
     .catch(error => res.status(400).json({ error: '⚠ Oops, une erreur s\'est produite !' }))  
 }
 
+// Permet d'afficher tous les likes pour un message
 exports.getAllLike = (req, res, next) => {
     db.Like.findAll({
         where: { postId: req.params.postId},

@@ -3,6 +3,7 @@
     <Navbar/>
     <div>
       <h1 v-if="user">Bienvenue {{ user.username }} !</h1>
+
       <div class="profile">
         <h2>Vos informations</h2>
 
@@ -26,6 +27,7 @@
 
         <button @click="modifyProfile" class="profile__smallButton">Enregister <i class="fas fa-check"></i></button>
       </div>
+
       <ModaleDeleteAccount v-bind:revele="revele" v-bind:displayModale='displayModale'/>
       <button class="profile__bigButton" v-on:click="displayModale">Supprimer mon compte <i class="far fa-trash-alt"></i></button>
     </div>
@@ -36,7 +38,7 @@
   import axios from 'axios'
   import Navbar from '@/components/Navbar.vue'
   import ModaleDeleteAccount from '@/components/ModaleDeleteAccount.vue'
-  import ProfileImage from '../components/ProfileImage'
+  import ProfileImage from '../components/ProfileImage.vue'
 
   export default {
     name: 'Profile',
@@ -52,7 +54,30 @@
       ModaleDeleteAccount,
       ProfileImage
     },
+    created() {
+     this.displayProfile();   
+    },
     methods: {
+      // Permet d'afficher les informations de profil
+      displayProfile() {
+        const userId = localStorage.getItem('userId');
+
+        axios.get('http://localhost:3000/api/user/' + userId, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token')
+          }
+        })
+        .then(response => {
+            this.user = response.data;
+            localStorage.setItem('imageProfile', response.data.imageProfile);
+        })
+        .catch(error => {
+            const msgerror = error.response.data
+            alert(msgerror.error)
+        })
+      },
+
+      // Permet de modifier la photo de profil
       uploadFile () {
         this.$refs.fileUpload.click()
       },
@@ -60,16 +85,16 @@
         this.imageProfile = event.target.files[0]
       },
       modifyProfile() {
-        var formData = new FormData();
+        const userId = localStorage.getItem('userId');
+
+        const formData = new FormData();
         formData.append("image", this.imageProfile);
 
-        const userId = localStorage.getItem('userId');
-        // console.log(this.imageProfile);
         axios.put('http://localhost:3000/api/user/' + userId, formData, {
-              headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token'),
-                'Content-Type': 'multipart/form-data'
-            }
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token'),
+            'Content-Type': 'multipart/form-data'
+          }
         })
         .then(() => {
           alert("Votre profil a bien été modifié !");
@@ -80,21 +105,11 @@
           alert(msgerror.error)
         })
       },
+
+      // Permet d'afficher la boîte modale pour la suppression du compte
       displayModale() {
         this.revele = !this.revele
-      },
-    },
-    async created() {
-      const userId = localStorage.getItem('userId');
-
-      const response = await axios.get('http://localhost:3000/api/user/' + userId, {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-      this.user = response.data;
-      localStorage.setItem('imageProfile', response.data.imageProfile);
-      console.log('image profil', response.data.imageProfile);
+      }
     }
   }
 </script>

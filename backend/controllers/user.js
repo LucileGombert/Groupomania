@@ -11,6 +11,7 @@ const db = require('../models/index');
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*]).{8,20}/;
 
+
 // Permet de créer un nouvel utilisateur
 exports.signup = (req, res, next) => {
     var username = req.body.username;
@@ -23,8 +24,8 @@ exports.signup = (req, res, next) => {
     } 
 
     // Permet de contrôler la longueur du pseudo
-    if(username.length <= 4 || username.length >= 15) {
-        return res.status(400).json({ error: 'Le pseudo doit contenir 5 à 15 caractères' });
+    if(username.length <= 3 || username.length >= 15) {
+        return res.status(400).json({ error: 'Le pseudo doit contenir 3 à 15 caractères' });
     }
 
     // Permet de contrôler la validité de l'adresse mail

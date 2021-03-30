@@ -43,26 +43,6 @@ exports.createPost = (req, res, next) => {
 };
 
 
-// Permet d'afficher un message
-exports.getOnePost = (req, res, next) => {
-    db.Post.findOne({
-        where: { id: req.params.postId },
-        include: [{
-            model: db.User,
-            attributes: [ 'username' ]
-        }]
-    })
-    .then(post => {
-        if(post) {
-            res.status(200).json(post);
-        } else {
-            res.status(404).json({ error: 'Message non trouvé' })
-        }
-    })
-    .catch(error => res.status(500).json({ error: '⚠ Oops, une erreur s\'est produite !' }));
-}
-
-
 // Permet d'afficher tous les messages
 exports.getAllPosts = (req, res, next) => {
     db.Post.findAll({

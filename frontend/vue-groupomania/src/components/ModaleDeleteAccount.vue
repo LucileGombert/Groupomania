@@ -10,6 +10,7 @@
                     <i @click="displayModale" class="far fa-times-circle fa-2x modaleBloc__card__title__close"></i>
                 </div>
             </div>
+
             <button @click="deleteAccount" class="modaleBloc__card__button">Oui, je supprime mon compte</button>
         </div>
     </div>
@@ -20,19 +21,21 @@
     import axios from 'axios'
 
     export default {
-        name: 'Modale',
+        name: 'ModaleDeleteAccount',
         props: ['revele', 'displayModale'],
         methods: {
+            // Permet de supprimer le compte
             deleteAccount(){
-                const id = localStorage.getItem('userId');
-                axios.delete('http://localhost:3000/api/user/' + id, {
+                const userId = localStorage.getItem('userId');
+
+                axios.delete('http://localhost:3000/api/user/' + userId, {
                     headers: {
                         'Content-Type' : 'application/json',
                         'Authorization': 'Bearer ' + localStorage.getItem('token')
                     }
                 })
                 .then(() => {
-                    console.log("Profil supprimé");
+                    alert('Votre compte a bien été supprimé');
                     localStorage.clear();
                     this.$router.push('/');
                 })

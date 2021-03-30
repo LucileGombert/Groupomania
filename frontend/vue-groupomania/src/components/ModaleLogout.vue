@@ -10,6 +10,7 @@
                     <i @click="displayModale" class="far fa-times-circle fa-2x modaleBloc__card__title__close" aria-label="Fermer la fenêtre"></i>
                 </div>
             </div>
+
             <button @click="logout" class="modaleBloc__card__button" aria-label="Se déconnecter">Oui, je me déconnecte <i class="fas fa-sign-out-alt"></i></button>
         </div>
     </div>
@@ -22,11 +23,13 @@
         props: ['revele', 'displayModale'],
         methods: {
             logout() {
+                // Permet de se déconnecter
                 localStorage.removeItem('token');
                 localStorage.removeItem('userId');
                 localStorage.removeItem('username');
                 localStorage.removeItem('isAdmin');
-                this.$store.dispatch('user', null);
+                localStorage.removeItem('imageProfile');
+                
                 this.$router.push('http://localhost:8080/#/');
             }
         }
