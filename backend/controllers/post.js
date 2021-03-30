@@ -91,6 +91,7 @@ exports.getAllPosts = (req, res, next) => {
 exports.modifyPost = (req, res, next) => {
     console.log('file', req.file);
     console.log('content', req.body.content);
+    console.log('bodypost', req.body.post);
     const postObject = req.file ?
     {
     content: req.body.content,

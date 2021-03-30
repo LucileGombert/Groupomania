@@ -19,7 +19,7 @@
                 <div class="newPost__option">
                     <div class="newPost__option__file">
                         <label for="file-input">
-                            <i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button" aria-label="Sélectionner un fichier"></i>
+                            <i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button" aria-label="Sélectionner un fichier" aria-hidden="false"></i>
                         </label>
                         <input type="file" @change="onFileSelected" accept="image/*" id="file-input">
                     </div>
@@ -34,9 +34,9 @@
                 <div class="displayPost__item__information">
                     <div class="displayPost__item__information__user">
                         <ProfileImage :src="post.User.imageProfile" class="displayPost__item__information__user__photo"/>
-                        <!-- <i class="fas fa-user-circle fa-3x displayPost__item__information__user__photo"></i> -->
                         <h2 class="displayPost__item__information__user__name">{{ post.User.username }}</h2>
                     </div>
+                  
                     <div>
                         <span class="displayPost__item__information__date">Publié le {{ dateFormat(post.createdAt) }}</span>
                     </div>
@@ -46,6 +46,7 @@
                     <p :contentPostId="post.id" style="display:block" class="displayPost__item__publication__text">{{ post.content }}</p>
 
                     <div :inputId="post.id" style="display:none" v-bind:showInputModify="showInputModify" class="displayPost__item__publication__text__modifyText">
+                        <textarea v-model="post.content" class="displayPost__item__publication__text__modifyText__textarea" aria-label="Modifier le message"/>
                         <textarea v-model="contentmodifyPost" :placeholder="post.content" class="displayPost__item__publication__text__modifyText__textarea" aria-label="Modifier le message"/>
                         <div class="newPost__option">
                             <div class="newPost__option__file">
@@ -57,18 +58,20 @@
                             </div>
                             <button v-on:click="modifyPost(post.id)" class="displayPost__item__publication__text__modifyText__button" aria-label="Enregistrer les modifications"><i class="fas fa-check"></i></button>
                         </div>
+                        <img v-if="post.imagePost && !imagePreview" :src="post.imagePost" class="displayPost__item__publication__image" alt=""/>
                         <img v-if="imagePreview" :src="imagePreview" class="newPost__content__image"/>
                     </div>
                     <img v-if="post.imagePost" :imgPostId="post.id" style="display:block" :src="post.imagePost" class="displayPost__item__publication__image" alt=""/>
                 </div>
 
                 <div class="displayPost__item__option">
-                    <div>
+                    <Likes v-bind:post="post"/>
+                    <!-- <div> -->
                         <!-- <i @click="likePost(post.id)" id="heart" :class="{'far fa-heart': !like, 'fas fa-heart': like}" class="displayPost__item__option__button" aria-label="Aimer le message"></i> -->
-                        <i @click="likePost(post.id)" id="heart" class=" far fa-heart displayPost__item__option__button" aria-label="Aimer le message"></i>
-                        <i @click="likePost(post.id)" style="display:none" id="heartplein" class=" fas fa-heart displayPost__item__option__button" aria-label="Aimer le message"></i>
+                        <!-- <i @click="likePost(post.id)" v-if="isLiked == false" class="far fa-heart displayPost__item__option__button" aria-label="Aimer le message"></i>
+                        <i @click="likePost(post.id)" v-if="isLiked == true" class="fas fa-heart displayPost__item__option__button" aria-label="Aimer le message"></i>
                         <span v-if="post.likes > 0" class="displayPost__item__option__count">{{ post.likes }}</span>
-                    </div>
+                    </div> -->
 
                     <div>
                         <i @click="displayComment(post.id)" v-on:click="diplayCreateComment(post.id)" class="displayPost__item__option__button far fa-comment-dots" aria-label="Commenter le message"></i>
@@ -119,16 +122,17 @@
 
 <script>
 import axios from 'axios'
-import moment from "moment";
+import moment from 'moment'
 import Navbar from '@/components/Navbar.vue'
-import ProfileImage from '../components/ProfileImage'
-
+import ProfileImage from '../components/ProfileImage.vue'
+import Likes from '../components/Likes.vue'
 
 export default {
     name: 'Post',
     components: {
         Navbar,
         ProfileImage,
+        Likes
     },
     data() {
         return {
@@ -145,7 +149,8 @@ export default {
             comments: [],
             contentComment: '',
             like: false,
-            likesPost: [],
+            isLiked: '',
+            postLikes: [],
             revele: false,
             showComment: false,
             showCreateComment: false,
@@ -155,8 +160,38 @@ export default {
     created() {
         this.displayPost();
     },
+    // updated() {
+    //     this.displayHeartColor();  
+    // },
     methods: {
-        uploadFile () {
+        // displayHeartColor(){
+        //     const postId = id;
+        //     console.log(postId);
+        //     const userId = localStorage.getItem('userId');
+
+        //     axios.get('http://localhost:3000/api/post/' + postId + '/like', {
+        //         headers: {
+        //             'Content-Type' : 'application/json',
+        //             'Authorization': 'Bearer ' + localStorage.getItem('token')
+        //         }
+        //     })
+        //     .then(response => {
+        //         this.postLikes = response.data;
+                                
+        //         if(this.postLikes.find(x => x.userId == userId)) {
+        //             this.isLiked = true;
+            
+        //         } else {
+        //             this.isLiked = false;   
+        //         }
+        //     })
+        //     .catch(error => {
+        //         const msgerror = error.response.data
+        //         alert(msgerror.error)
+        //         alert(JSON.stringify(error.response.data))
+        //     })
+        // },
+        uploadFile() {
             this.$refs.fileUpload.click()
         },
         onFileSelected(event) {
@@ -287,108 +322,92 @@ export default {
                 alert(msgerror.error)
             })
         },
-        likePost(id) {
-            const postId = id;
-            const userId = localStorage.getItem('userId');
-            axios.get('http://localhost:3000/api/post/' + postId + '/like', {
-                    headers: {
-                        'Content-Type' : 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
-                    }
-                })
-                .then(response => {
-                    this.likesPost = response.data;
-                    // console.log('thislike', this.like)
-                    console.log('likesPost', this.likesPost)
-                    // console.log('userId', userId);
-                    // console.log('tableau', this.likesPost.length);
-                    // console.log('likePostUserId', this.likesPost.length);
+        // likePost(id) {
+        //     const postId = id;
+        //     const userId = localStorage.getItem('userId');
+        //     axios.get('http://localhost:3000/api/post/' + postId + '/like', {
+        //         headers: {
+        //             'Content-Type' : 'application/json',
+        //             'Authorization': 'Bearer ' + localStorage.getItem('token')
+        //         }
+        //     })
+        //     .then(response => {
+        //         this.postLikes = response.data;
+                
+        //         if(this.postLikes.length == 0) {
+        //             this.like = false  
+
+        //             axios.post('http://localhost:3000/api/post/' + postId + '/like', {
+        //                 like: this.like,
+        //             },{
+        //                 headers: {
+        //                     'Content-Type' : 'application/json',
+        //                     'Authorization': 'Bearer ' + localStorage.getItem('token')
+        //                 }
+        //             })
+        //             .then(() => {
+        //                 alert("Vous aimez ce message !");
+        //                 // this.isLiked = true;
+        //                 window.location.reload()
+                        
+        //             })
+        //             .catch(error => {
+        //                 const msgerror = error.response.data
+        //                 alert(msgerror.error)
+        //                 alert(JSON.stringify(error.response.data))
+        //             })
+        //         } else {                     
+        //             if(this.postLikes.find(x => x.userId == userId)) {
+        //                 this.like = true   
+                        
+        //                 axios.post('http://localhost:3000/api/post/' + postId + '/like', {
+        //                     like: this.like,
+        //                 },{
+        //                     headers: {
+        //                         'Content-Type' : 'application/json',
+        //                         'Authorization': 'Bearer ' + localStorage.getItem('token')
+        //                     }
+        //                 })
+        //                 .then(() => {
+        //                     alert("Vous n'aimez plus ce message");
+        //                     window.location.reload()
+        //                 })
+        //                 .catch(error => {
+        //                     const msgerror = error.response.data
+        //                     alert(msgerror.error)
+        //                     alert(JSON.stringify(error.response.data))
+        //                 })
+        //             } else {
+        //                 this.like = false   
                     
-                    
-                    if(this.likesPost.length == 0) {
-                        this.like = false   
-                        console.log('pas déjà liké', this.like);
-                        axios.post('http://localhost:3000/api/post/' + postId + '/like', {
-                            like: this.like,
-                        },{
-                            headers: {
-                                'Content-Type' : 'application/json',
-                                'Authorization': 'Bearer ' + localStorage.getItem('token')
-                            }
-                        })
-                        .then(() => {
-                            console.log('thislike', this.like);
-                            alert("Vous aimez ce message !");
-                            // const heart = document.querySelector('#heart');
-                            // heart.setAttribute('class', 'active');
-                            // console.log('coeur', heart);
-                            // heart.style.color = 'red';
-                            // window.location.reload()
-                            
-                        })
-                        .catch(error => {
-                            const msgerror = error.response.data
-                            alert(msgerror.error)
-                            alert(JSON.stringify(error.response.data))
-                        })
-                    } else {
-                        console.log('allo');
-                        for(let i=0; i < this.likesPost.length; i++) {
-                            if(userId == this.likesPost[i].UserId) {
-                                this.like = true   
-                                console.log('déjà liké', this.like);
-                                axios.post('http://localhost:3000/api/post/' + postId + '/like', {
-                                    like: this.like,
-                                },{
-                                    headers: {
-                                        'Content-Type' : 'application/json',
-                                        'Authorization': 'Bearer ' + localStorage.getItem('token')
-                                    }
-                                })
-                                .then(() => {
-                                    console.log('thislikedéjà liké', this.like)
-                                    alert("Vous n'aimez plus ce message");
-                                    // window.location.reload()
-                                })
-                                .catch(error => {
-                                    const msgerror = error.response.data
-                                    alert(msgerror.error)
-                                    alert(JSON.stringify(error.response.data))
-                                })
-                            }
-                            // } else {
-                            //     this.like = false   
-                            //     console.log('pas déjà liké', this.like);
-                            //     console.log('userId', userId);
-                            //     console.log('likePostUserId', this.likesPost[i].UserId);
-                            //     axios.post('http://localhost:3000/api/post/' + postId + '/like', {
-                            //         like: this.like,
-                            //     },{
-                            //         headers: {
-                            //             'Content-Type' : 'application/json',
-                            //             'Authorization': 'Bearer ' + localStorage.getItem('token')
-                            //         }
-                            //     })
-                            //     .then(() => {
-                            //         console.log('thislikepas déjà liké', this.like);
-                            //         alert("Vous aimez ce message !");
-                            //         // window.location.reload()
-                            //     })
-                            //     .catch(error => {
-                            //         const msgerror = error.response.data
-                            //         alert(msgerror.error)
-                            //         alert(JSON.stringify(error.response.data))
-                            //     })
-                            // }
-                        }
-                    }
-                })
-                .catch(error => {
-                    const msgerror = error.response.data
-                    alert(msgerror.error)
-                    alert(JSON.stringify(error.response.data))
-                })
-        },
+        //                 axios.post('http://localhost:3000/api/post/' + postId + '/like', {
+        //                     like: this.like,
+        //                 },{
+        //                     headers: {
+        //                         'Content-Type' : 'application/json',
+        //                         'Authorization': 'Bearer ' + localStorage.getItem('token')
+        //                     }
+        //                 })
+        //                 .then(() => {
+        //                     alert("Vous aimez ce message !");
+        //                     // this.isLiked = true;
+        //                     window.location.reload()
+        //                 })
+        //                 .catch(error => {
+        //                     const msgerror = error.response.data
+        //                     alert(msgerror.error)
+        //                     alert(JSON.stringify(error.response.data))
+        //                 })
+        //             }
+        //         }
+        //     })
+        //     .catch(error => {
+        //         const msgerror = error.response.data
+        //         alert(msgerror.error)
+        //         alert(JSON.stringify(error.response.data))
+        //     })
+        // },
+        
         
         
         displayComment(id) {

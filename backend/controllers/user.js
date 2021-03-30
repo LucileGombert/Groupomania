@@ -126,7 +126,7 @@ exports.modifyUserProfile = (req, res, next) => {
     const userId = decodedToken.userId;
 
     req.body.user = userId
-    // req.body.user = 2
+    
     
     console.log('bodyUser', req.body.user);
     const userObject = req.file ?
