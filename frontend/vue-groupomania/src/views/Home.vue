@@ -133,7 +133,7 @@
                     padding: 0.9rem;
                     margin: 1rem;
                     outline-style: none;
-                    &:hover {
+                    &:hover, &:focus {
                         border: 3px solid #ff6363;
                         color: #ff6363;
                         cursor: pointer;

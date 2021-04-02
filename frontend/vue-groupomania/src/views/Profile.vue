@@ -11,10 +11,9 @@
           <ProfileImage :src="user.imageProfile" class="profile__photo__image"/>
 
           <div class="profile__photo__modify">
-              <label for="file-input" aria-label="Sélectionner un fichier">
-                <i @click="uploadFile" class="far fa-edit profile__photo__modify__btnInvisible" aria-label="Modifier la photo de profil"></i>
-              </label>
-              <input type="file" @change="onFileSelected"  accept="image/*" id="file-input">
+            <button @click="uploadFile" type="button" class="profile__photo__modify__btnInvisible"><i class="far fa-edit"></i> Modifier ma photo de profil</button>
+              
+            <input type="file" ref="fileUpload" @change="onFileSelected"  accept="image/*" id="file-input" aria-label="Modifier ma photo de profil">
           </div>
         </div>
                         
@@ -132,10 +131,12 @@
     }
     &__photo {
       display: flex;
+      flex-direction: column;
       align-items: center;
       margin-top: 1rem;
       &__image {
         margin-right: 1rem;
+        margin-bottom: 0.5rem;
       }
       &__modify>input {
         display: none; 
@@ -143,7 +144,8 @@
       &__modify__btnInvisible {
         border: none;
         background-color: #ffb1b1;
-        &:hover {
+        color: #3f3d56;
+        &:hover, &:focus {
           color: white;
           cursor: pointer;
         }
@@ -175,7 +177,7 @@
       margin: 1rem;
       outline-style: none;
       background: white;
-      &:hover {
+      &:hover, &:focus {
         color: #ff6363;
         cursor: pointer;
       }
@@ -189,7 +191,7 @@
       padding: 0.9rem;
       margin: 1rem;
       outline-style: none;
-      &:hover {
+      &:hover, &:focus {
         border: 3px solid #ff6363;
         color: #ff6363;
         cursor: pointer;

@@ -88,7 +88,7 @@
                     top: 1rem;
                     right: 1rem;
                     color: #3f3d56;
-                    &:hover {
+                    &:hover, &:focus {
                         color: #ff6363;
                     }
                 }
@@ -102,7 +102,7 @@
                 padding: 0.9rem;
                 margin: 1rem 0 2rem 0;
                 outline-style: none;
-                &:hover {
+                &:hover, &:focus {
                     border: 3px solid #ff6363;
                     color: #ff6363;
                 }

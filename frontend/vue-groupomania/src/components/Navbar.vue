@@ -19,7 +19,7 @@
 
                     <li class="nav-item">
                         <ModaleLogout v-bind:revele="revele" v-bind:displayModale='displayModale'/>
-                        <i @click="displayModale" class="fas fa-sign-out-alt nav__links__logoutLink"></i>
+                        <button @click="displayModale" class="nav__links__logoutLink">Déconnexion <i class="fas fa-sign-out-alt"></i></button>    
                     </li>
                 </ul>
             </div>
@@ -64,16 +64,16 @@
             max-width: 450px;
             width: 52%;
         }
-        &__menuButton:hover {
+        &__menuButton:hover, &__menuButton:focus {
             color: #ff6363;
         }
-        a {
+        a, button {
             font-weight: bold;
             color: #3f3d56;
             // &.router-link-exact-active {
             // color: #ff6363;
             // }
-            &:hover {
+            &:hover, &:focus  {
                 color: #ff6363;
             }
         }
@@ -83,7 +83,7 @@
             @media (max-width: 766px) {
                 padding: 0;
             }
-            &__link {
+            &__link {   
                 padding-right: 4rem;
                 text-decoration: none;
                 align-items: flex-end;
@@ -92,8 +92,9 @@
                 }
             }
             &__logoutLink {
-                cursor: pointer;
-                &:hover {
+                border: none;
+                background-color: white;
+                &:hover, &:focus  {
                     color: #ff6363;
                 }
             }

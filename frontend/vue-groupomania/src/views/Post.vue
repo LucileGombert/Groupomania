@@ -12,20 +12,18 @@
 
             <form @submit.prevent="createPost" aria-label="Nouveau message">
                 <div class="newPost__content">
-                    <textarea v-model="content" class="newPost__content__text" name="message" id="message" placeholder="Quoi de neuf ?" aria-label="Rédiger le message"/>    
+                    <textarea v-model="content" class="newPost__content__text" name="message" id="message" placeholder="Quoi de neuf ?" aria-label="Rédiger un nouveau message"/>    
                     
                     <div id="preview" style="display:block">
-                        <img v-if="imagePreview" :src="imagePreview" id="preview" style="display:block" class="newPost__content__image"/>
+                        <img v-if="imagePreview" :src="imagePreview" id="preview" style="display:block" class="newPost__content__image" alt="Prévisualisation de l'image ajoutée au message"/>
                     </div>        
                 </div>
 
                 <div class="newPost__option">
                     <div class="newPost__option__file">
-                        <label for="file-input">
-                            <i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button" aria-label="Sélectionner un fichier" aria-hidden="false"></i>
-                        </label>
-
-                        <input type="file" @change="onFileSelected" accept="image/*" id="file-input">
+                    <button @click="uploadFile" type="button" class="newPost__option__file__btnInvisible"><i class="far fa-images fa-2x"></i> Choisir un fichier</button>
+                    
+                        <input type="file" ref="fileUpload" @change="onFileSelected" accept="image/*" aria-label="Sélectionner un fichier">
                     </div>
                     
                     <button type="submit" class="newPost__option__button" aria-label="Publier le message">Publier <i class="far fa-paper-plane"></i></button>
@@ -52,24 +50,22 @@
                     <div :inputId="post.id" style="display:none" v-bind:showInputModify="showInputModify" class="displayPost__item__publication__text__modifyText">
                         <textarea v-model="contentmodifyPost" :placeholder="post.content" class="displayPost__item__publication__text__modifyText__textarea" aria-label="Modifier le message"/>
                         
-                        <div class="newPost__option">
-                            <div class="newPost__option__file">
-                                <label for="changeFile-input">
-                                    <i @click="uploadFile" class="far fa-images fa-2x newPost__option__file__button" aria-label="Sélectionner un fichier"></i>
-                                </label>
-
-                                <input type="file" @change="onFileSelected" accept="image/*" id="changeFile-input">
+                        <div class="displayPost__item__publication__text__modifyText__option">
+                            <div class="displayPost__item__publication__text__modifyText__option__file">
+                                <button @click="uploadFile" type="button" class="displayPost__item__publication__text__modifyText__option__file__btnInvisible"><i class="far fa-images fa-2x"></i> Choisir un fichier</button>
+                               
+                                <input type="file" ref="fileUpload" @change="onFileSelected" accept="image/*" aria-label="Sélectionner un fichier">
                             </div>
 
-                            <button v-on:click="modifyPost(post.id)" class="displayPost__item__publication__text__modifyText__button" aria-label="Enregistrer les modifications"><i class="fas fa-check"></i></button>
+                            <button v-on:click="modifyPost(post.id)" class="displayPost__item__publication__text__modifyText__option__button" aria-label="Enregistrer les modifications">Enregistrer <i class="fas fa-check"></i></button>
                         </div>
 
-                        <img v-if="post.imagePost && !imagePreview" :src="post.imagePost" class="displayPost__item__publication__image" alt=""/>
+                        <img v-if="post.imagePost && !imagePreview" :src="post.imagePost" class="displayPost__item__publication__image" alt="Image insérée dans le message"/>
                         
-                        <img v-if="imagePreview" :src="imagePreview" class="newPost__content__image"/>
+                        <img v-if="imagePreview" :src="imagePreview" class="newPost__content__image" alt="Prévisualisation de l'image ajoutée au message modifié"/>
                     </div>
 
-                    <img v-if="post.imagePost" :imgPostId="post.id" style="display:block" :src="post.imagePost" class="displayPost__item__publication__image" alt=""/>
+                    <img v-if="post.imagePost" :imgPostId="post.id" style="display:block" :src="post.imagePost" class="displayPost__item__publication__image" alt="Image insérée dans le message"/>
                 </div>
 
                 <div class="displayPost__item__option">
@@ -113,7 +109,7 @@
 
                 <div :formId="post.id" style="display:none" v-bind:showCreateComment="showCreateComment" class="displayComment__newComment">
                     <form @submit.prevent="createComment(post.id)" class="displayComment__newComment__form">
-                        <textarea v-model="contentComment" class="displayComment__newComment__form__text" name="comment" id="comment" placeholder="Ecrivez votre commentaire ..." aria-label="Rédiger un commentaire"/>              
+                        <textarea v-model="contentComment" class="displayComment__newComment__form__text" name="comment" id="comment" placeholder="Ecrivez votre commentaire ..." aria-label="Rédiger un nouveau commentaire"/>              
                         
                         <div>
                             <button class="displayComment__newComment__form__button" aria-label="Publier le commentaire"><i class="far fa-paper-plane"></i></button>
@@ -252,6 +248,9 @@
                     
                 } else if(postId == inputId && this.showInputModify == true) {
                     input.style.display = "none";
+                    contentPost.style.display = "block";
+                    let imgPost = document.querySelector('img[imgPostId="'+id+'"]')
+                    imgPost.style.display = "block";
                     this.showInputModify = !this.showInputModify
                 }
             },
@@ -436,13 +435,12 @@
             }
             &__file {
                 &__btnInvisible {
+                    display: flex;
+                    align-items: center;
+                    color: #3f3d56;
                     border: none;
                     background-color: #ffb1b1;
-                }
-                &__button {
-                    border: none;
-                    &:hover {
-                        cursor: pointer;
+                    &:hover, &:focus {
                         color: white;
                     }
                 }
@@ -456,9 +454,8 @@
                 padding: 0.4rem;
                 margin: 1rem;
                 outline-style: none;
-                &:hover {
+                &:hover, &:focus {
                     color: #ff6363;
-                    cursor: pointer;
                 }
             }
             
@@ -481,6 +478,7 @@
             }
             @media (max-width: 768px) {
                 width: 70%;
+                padding: 0.5rem;
             }
             @media (max-width: 550px) {
                 width: 80%;
@@ -525,9 +523,15 @@
                 display: flex;
                 flex-direction: column;
                 margin: 0.5rem 2rem;
+                @media (max-width: 700px) {
+                    margin: 0.5rem;
+                }
                 &__text {
                     text-align: left;
-                    margin: 0 15.25px;
+                    margin: 0 ;
+                    @media (max-width: 700px) {
+                        font-size: 14px;
+                    }
                     &__modifyText {
                         display: flex;
                         align-items: center;
@@ -539,13 +543,37 @@
                             border-radius: 5px;
                             width: 90%;
                         }
-                        &__button {
-                            border-radius: 5px;
-                            margin-left: 1rem;
-                            
-                            &:hover {
-                                color: #ff6363;
-                                cursor: pointer;
+                        &__option {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-around;
+                            &__file>input {
+                            display: none; 
+                            }
+                            &__file__btnInvisible {
+                                display: flex;
+                                align-items: center;
+                                font-size: 14px;
+                                color: #3f3d56;
+                                border: none;
+                                background-color: white;
+                                &:hover, &:focus {
+                                    color: #ff6363;
+                                }
+                            }
+                            &__button {
+                                border: 2px solid #3f3d56;
+                                border-radius: 25px;
+                                color: #3f3d56;
+                                font-size: 14px;
+                                font-weight: bold;
+                                padding: 0.4rem;
+                                margin: 1rem;
+                                outline-style: none;
+                                margin-left: 1rem;
+                                &:hover, &:focus {
+                                    color: #ff6363;
+                                }
                             }
                         }
                     }
@@ -561,7 +589,7 @@
             &__option {
                 display: flex;
                 justify-content: space-around;
-                &__button:hover {
+                &__button:hover, &__button:focus {
                     color: #ff6363;
                     cursor: pointer;
                 }
@@ -584,6 +612,18 @@
             margin-top: 0.5rem;
             padding: 0.5rem;
             width: 40%;
+            @media (max-width: 950px) {
+                width: 50%;
+            }
+            @media (max-width: 768px) {
+                width: 60%;
+            }
+            @media (max-width: 550px) {
+                width: 70%;
+            }
+            @media (max-width: 450px) {
+                width: 80%;
+            }
             &__information {
                 display: flex;
                 justify-content: space-between;
@@ -643,7 +683,7 @@
                     padding: 0.4rem;
                     margin: 1rem;
                     outline-style: none;
-                    &:hover {
+                    &:hover, &:focus {
                         color: #ff6363;
                         cursor: pointer;
                     }
@@ -659,8 +699,8 @@
         textarea {
             font-size: 14px;
         }
-    }
-    label i {
-        color: #3f3d56;
+        button {
+            font-size: 14px;
+        }
     }
 </style>
