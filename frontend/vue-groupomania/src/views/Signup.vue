@@ -36,6 +36,8 @@
 
 <script>
     import axios from 'axios'
+    import { Notyf } from 'notyf'
+    import 'notyf/notyf.min.css'
 
     export default {
         name: 'Signup',
@@ -43,7 +45,15 @@
             return {
                 username: '',
                 email: '',
-                password: ''
+                password: '',
+                notyf : new Notyf({
+                    duration: 2000,
+                    position: {
+                        x: 'center',
+                        y: 'bottom'
+                    },
+                    dismissible: true
+                })
             }
         },
         methods: {
@@ -60,7 +70,8 @@
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    alert(msgerror.error)
+                    // alert(msgerror.error)
+                    this.notyf.error(msgerror.error)
                 })
             },
         }

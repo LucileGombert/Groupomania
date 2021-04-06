@@ -35,23 +35,34 @@
 
 <script>
   import axios from 'axios'
+  import { Notyf } from 'notyf'
+  import 'notyf/notyf.min.css'
+
   import Navbar from '@/components/Navbar.vue'
   import ModaleDeleteAccount from '@/components/ModaleDeleteAccount.vue'
   import ProfileImage from '../components/ProfileImage.vue'
 
   export default {
     name: 'Profile',
+    components: {
+      Navbar,
+      ModaleDeleteAccount,
+      ProfileImage
+    },
     data(){
       return {
         revele: false,
         user: "",
         imageProfile: null,
+        notyf : new Notyf({
+          duration: 2000,
+          position: {
+              x: 'center',
+              y: 'top'
+          },
+          dismissible: true
+        })
       }
-    },
-    components: {
-      Navbar,
-      ModaleDeleteAccount,
-      ProfileImage
     },
     created() {
      this.displayProfile();   
@@ -72,7 +83,7 @@
         })
         .catch(error => {
             const msgerror = error.response.data
-            alert(msgerror.error)
+            this.notyf.error(msgerror.error)
         })
       },
 
@@ -101,7 +112,7 @@
         })
         .catch(error => {
           const msgerror = error.response.data
-          alert(msgerror.error)
+          this.notyf.error(msgerror.error)
         })
       },
 

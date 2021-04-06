@@ -30,7 +30,7 @@
                 localStorage.removeItem('isAdmin');
                 localStorage.removeItem('imageProfile');
                 
-                this.$router.push('http://localhost:8080/#/');
+                this.$router.push('http://localhost:8080/');
             }
         }
     }

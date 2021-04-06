@@ -8,6 +8,8 @@
 
 <script>
     import axios from 'axios'
+    import { Notyf } from 'notyf'
+    import 'notyf/notyf.min.css'
 
     export default {
         name: 'Likes',
@@ -15,6 +17,14 @@
         data(){
             return {
                 userId: localStorage.getItem('userId'),
+                notyf : new Notyf({
+                    duration: 2000,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    dismissible: true
+                })
             }
         },
         mounted() {
@@ -53,7 +63,7 @@
                         })
                         .catch(error => {
                             const msgerror = error.response.data
-                            alert(msgerror.error)
+                            this.notyf.error(msgerror.error)
                         })
                     } else {                     
                         if(this.postLikes.find(x => x.userId == userId)) {
@@ -73,8 +83,7 @@
                             })
                             .catch(error => {
                                 const msgerror = error.response.data
-                                alert(msgerror.error)
-                                alert(JSON.stringify(error.response.data))
+                                this.notyf.error(msgerror.error)
                             })
                         } else {
                             this.like = false   
@@ -93,15 +102,14 @@
                             })
                             .catch(error => {
                                 const msgerror = error.response.data
-                                alert(msgerror.error)
+                                this.notyf.error(msgerror.error)
                             })
                         }
                     }
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    alert(msgerror.error)
-                    alert(JSON.stringify(error.response.data))
+                    this.notyf.error(msgerror.error)
                 })
             },
 
@@ -128,7 +136,7 @@
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    alert(msgerror.error)
+                    this.notyf.error(msgerror.error)
                 })
             }
         }

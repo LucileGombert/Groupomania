@@ -19,10 +19,25 @@
 
 <script>
     import axios from 'axios'
+    import { Notyf } from 'notyf'
+    import 'notyf/notyf.min.css'
+
 
     export default {
         name: 'ModaleDeleteAccount',
         props: ['revele', 'displayModale'],
+        data() {
+            return {
+                notyf : new Notyf({
+                    duration: 2000,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    dismissible: true
+                })
+            }
+        },
         methods: {
             // Permet de supprimer le compte
             deleteAccount(){
@@ -41,7 +56,7 @@
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    alert(msgerror.error)
+                    this.notyf.error(msgerror.error)
                 })
             }
         }

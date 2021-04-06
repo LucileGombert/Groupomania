@@ -128,6 +128,10 @@
 <script>
     import axios from 'axios'
     import moment from 'moment'
+    import { Notyf } from 'notyf'
+    import 'notyf/notyf.min.css'
+    import toastr from 'toastr'
+
     import Navbar from '@/components/Navbar.vue'
     import ProfileImage from '../components/ProfileImage.vue'
     import Likes from '../components/Likes.vue'
@@ -158,12 +162,20 @@
                 revele: false,
                 showComment: false,
                 showCreateComment: false,
-                showInputModify: false
+                showInputModify: false,
+                notyf : new Notyf({
+                    duration: 2000,
+                    position: {
+                        x: 'center',
+                        y: 'top'
+                    },
+                    dismissible: true
+                })
             }
         },
         created() {
             this.displayPost();
-        },
+        },       
         methods: {
             // Permet de créer un nouveau message
             uploadFile() {
@@ -185,12 +197,14 @@
                     }
                 })
                 .then(() => {
-                    alert('Votre message a bien été créé !');
+                    // alert('Votre message a bien été créé !');
+                    this.notyf.success('Votre message a bien été créé !');
                     window.location.reload()
+                    
                 })
                 .catch(error => {
-                    const msgerror = error.response.data
-                    alert(msgerror.error)
+                    const msgerror = error.response.data;
+                    this.notyf.error(msgerror.error)
                 })
             },
 
@@ -204,10 +218,11 @@
                 })
                 .then(response => {
                     this.posts = response.data;
+    
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    alert(msgerror.error)
+                    this.notyf.error(msgerror.error)
                 })
             },
 
@@ -275,7 +290,7 @@
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    alert(msgerror.error)
+                    this.notyf.error(msgerror.error)
                 })
             },
 
@@ -290,12 +305,13 @@
                     }
                 })
                 .then(() => {
-                    alert("Votre message a bien été supprimé !");
+                    // alert('Votre message a bien été supprimé !');
+                    toastr.success('Votre message a bien été supprimé !');
                     window.location.reload()
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    alert(msgerror.error)
+                    this.notyf.error(msgerror.error)
                 })
             },
             
@@ -336,7 +352,7 @@
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    alert(msgerror.error)
+                    this.notyf.error(msgerror.error)
                 })
             },
 
@@ -357,7 +373,7 @@
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    alert(msgerror.error)
+                    this.notyf.error(msgerror.error)
                 })
             },
 
@@ -377,7 +393,7 @@
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    alert(msgerror.error)
+                    this.notyf.error(msgerror.error)
                 })
             }
         }
