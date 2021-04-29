@@ -46,15 +46,16 @@
                 username: '',
                 email: '',
                 password: '',
-                notyf : new Notyf({
-                    duration: 2000,
-                    position: {
-                        x: 'center',
-                        y: 'bottom'
-                    },
-                    dismissible: true
-                })
             }
+        },
+        created() {
+            this.notyf = new Notyf({
+                duration: 4000,
+                position: {
+                    x: 'center',
+                    y: 'bottom'
+                }
+            });
         },
         methods: {
             // Permet de s'inscrire et de basculer sur la page de connexion 
@@ -65,12 +66,11 @@
                     password: this.password,
                 })
                 .then(() => {
-                    alert('Votre compte a bien été créé ! A présent, veuillez vous connecter.')
+                    this.notyf.success('Votre compte a bien été créé ! A présent, veuillez vous connecter.')
                     this.$router.push('/');
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    // alert(msgerror.error)
                     this.notyf.error(msgerror.error)
                 })
             },

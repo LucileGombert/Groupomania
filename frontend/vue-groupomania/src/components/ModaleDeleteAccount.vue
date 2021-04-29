@@ -26,17 +26,14 @@
     export default {
         name: 'ModaleDeleteAccount',
         props: ['revele', 'displayModale'],
-        data() {
-            return {
-                notyf : new Notyf({
-                    duration: 2000,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
-                    dismissible: true
-                })
-            }
+        created() {
+            this.notyf = new Notyf({
+                duration: 2000,
+                position: {
+                    x: 'center',
+                    y: 'bottom'
+                }
+            });
         },
         methods: {
             // Permet de supprimer le compte
@@ -50,7 +47,7 @@
                     }
                 })
                 .then(() => {
-                    alert('Votre compte a bien été supprimé');
+                    this.notyf.success('Votre compte a bien été supprimé')
                     localStorage.clear();
                     this.$router.push('/');
                 })

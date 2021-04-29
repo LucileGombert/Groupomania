@@ -57,9 +57,8 @@
                             }
                         })
                         .then(() => {
-                            alert("Vous aimez ce message !");
+                            console.log("Vous aimez ce message !");
                             window.location.reload()
-                            
                         })
                         .catch(error => {
                             const msgerror = error.response.data
@@ -78,7 +77,7 @@
                                 }
                             })
                             .then(() => {
-                                alert("Vous n'aimez plus ce message");
+                                console.log("Vous n'aimez plus ce message");
                                 window.location.reload()
                             })
                             .catch(error => {
@@ -97,7 +96,7 @@
                                 }
                             })
                             .then(() => {
-                                alert("Vous aimez ce message !");
+                                console.log("Vous aimez ce message !");
                                 window.location.reload()
                             })
                             .catch(error => {
@@ -129,7 +128,6 @@
                                 
                     if(this.postLikes.find(x => x.userId == userId)) {
                         document.getElementById(this.post.id).classList = "fas fa-heart like__button postLiked"; 
-                    
                     } else {  
                         document.getElementById(this.post.id).classList = "far fa-heart like__button"; 
                     }

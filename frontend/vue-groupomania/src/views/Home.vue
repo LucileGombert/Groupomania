@@ -40,16 +40,17 @@
             return {
                 email: '',
                 password: '',
-                notyf : new Notyf({
-                    duration: 2000,
-                    position: {
-                        x: 'center',
-                        y: 'bottom'
-                    },
-                    dismissible: true
-                })
             }
         },
+        created() {
+            this.notyf = new Notyf({
+                duration: 2000,
+                position: {
+                    x: 'center',
+                    y: 'bottom'
+                }
+            });
+        }, 
         methods: {
             // Permet de se connecter et de recharger la page sans que l'utilisateur soit déconnecté
             login() {
@@ -68,7 +69,6 @@
                 })
                 .catch(error => {
                     const msgerror = error.response.data
-                    // alert(msgerror.error)
                     this.notyf.error(msgerror.error)
                 })
             }

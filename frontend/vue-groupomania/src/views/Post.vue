@@ -48,7 +48,7 @@
                     <p :contentPostId="post.id" style="display:block" class="displayPost__item__publication__text">{{ post.content }}</p>
 
                     <div :inputId="post.id" style="display:none" v-bind:showInputModify="showInputModify" class="displayPost__item__publication__text__modifyText">
-                        <textarea v-model="contentmodifyPost" :placeholder="post.content" class="displayPost__item__publication__text__modifyText__textarea" aria-label="Modifier le message"/>
+                        <textarea v-model="contentmodifyPost" :placeholder="post.content" id="textarea" class="displayPost__item__publication__text__modifyText__textarea" aria-label="Modifier le message"/>
                         
                         <div class="displayPost__item__publication__text__modifyText__option">
                             <div class="displayPost__item__publication__text__modifyText__option__file">
@@ -130,8 +130,7 @@
     import moment from 'moment'
     import { Notyf } from 'notyf'
     import 'notyf/notyf.min.css'
-    import toastr from 'toastr'
-
+    
     import Navbar from '@/components/Navbar.vue'
     import ProfileImage from '../components/ProfileImage.vue'
     import Likes from '../components/Likes.vue'
@@ -163,19 +162,18 @@
                 showComment: false,
                 showCreateComment: false,
                 showInputModify: false,
-                notyf : new Notyf({
-                    duration: 2000,
-                    position: {
-                        x: 'center',
-                        y: 'top'
-                    },
-                    dismissible: true
-                })
             }
         },
         created() {
             this.displayPost();
-        },       
+            this.notyf = new Notyf({
+                duration: 2000,
+                position: {
+                    x: 'center',
+                    y: 'top'
+                }
+            });
+        },  
         methods: {
             // Permet de créer un nouveau message
             uploadFile() {
@@ -197,16 +195,15 @@
                     }
                 })
                 .then(() => {
-                    // alert('Votre message a bien été créé !');
-                    this.notyf.success('Votre message a bien été créé !');
                     window.location.reload()
-                    
                 })
                 .catch(error => {
                     const msgerror = error.response.data;
                     this.notyf.error(msgerror.error)
+                    
                 })
             },
+            
 
             // Permet d'afficher tous les messages
             displayPost() {
@@ -285,7 +282,6 @@
                     }
                 })
                 .then(() => {
-                    alert("Votre message a bien été modifié !");
                     window.location.reload()
                 })
                 .catch(error => {
@@ -305,9 +301,7 @@
                     }
                 })
                 .then(() => {
-                    // alert('Votre message a bien été supprimé !');
-                    toastr.success('Votre message a bien été supprimé !');
-                    window.location.reload()
+                    this.displayPost();
                 })
                 .catch(error => {
                     const msgerror = error.response.data
@@ -347,8 +341,7 @@
                     }
                 })
                 .then(() => {
-                    alert("Votre commentaire a bien été créé !");
-                    window.location.reload()
+                    window.location.reload()                    
                 })
                 .catch(error => {
                     const msgerror = error.response.data
@@ -388,7 +381,6 @@
                     }
                 })
                 .then(() => {
-                    alert("Votre commentaire a bien été supprimé !");
                     window.location.reload()
                 })
                 .catch(error => {
@@ -548,6 +540,9 @@
                     @media (max-width: 700px) {
                         font-size: 14px;
                     }
+                    @media (min-width: 2800px) {
+                        margin-left: 1.8rem;
+                    }
                     &__modifyText {
                         display: flex;
                         align-items: center;
@@ -595,7 +590,7 @@
                     }
                 }
                 &__image {
-                    max-width: 1100px;
+                    max-width: 1250px;
                     width: 100%;
                     height: 274px;
                     margin: 1rem auto;
