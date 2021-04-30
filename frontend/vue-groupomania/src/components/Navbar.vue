@@ -1,6 +1,6 @@
 <template>  
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light nav">
+        <nav class="navbar navbar-expand-lg navbar-light nav">
             <img class="nav__logo" src="../assets/iconLong450.png" alt="Logo de Groupomania">
 
             <button class="navbar-toggler justify-content-center nav__menuButton" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,14 +80,14 @@
         &__links {
             padding: 2rem;
             align-items: flex-end;
-            @media (max-width: 766px) {
+            @media (max-width: 776px) {
                 padding: 0;
             }
             &__link {   
                 padding-right: 4rem;
                 text-decoration: none;
                 align-items: flex-end;
-                @media (max-width: 766px) {
+                @media (max-width: 990px) {
                     padding: 0;
                 }
             }
@@ -96,6 +96,9 @@
                 background-color: white;
                 &:hover, &:focus  {
                     color: #ff6363;
+                }
+                @media (max-width: 990px) {
+                    padding-right: 0;
                 }
             }
         }
